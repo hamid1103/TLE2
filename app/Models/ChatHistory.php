@@ -11,7 +11,7 @@ class ChatHistory extends Model
         'ChatTitle',
     ];
 
-    public function ChatEntry(): HasMany
+    public function ChatEntries(): HasMany
     {
         return $this->hasMany(ChatEntry::class);
     }

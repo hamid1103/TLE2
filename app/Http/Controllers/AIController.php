@@ -63,17 +63,18 @@ class AIController extends Controller
 
     public function index(Request $request)
     {
-        //Inertia Render "Chat Page"
-    }
-
-    public function LoadChatHistory(Request $request)
-    {
-        //Find Chat History by ID
-        //Inertia Render "Chat Page" with Chat History
+        if(isset($request->ChatID))
+        {
+            $FullHistory = ChatHistory::find($request->ChatID)->ChatEntries;
+            //Return Inertia Page Here with $FullHistory
+        }else{
+            //return Inertia Page Here
+        }
     }
 
     public function ChatPrompt(Request $request)
     {
+        $CH = 0;
         //GuzzleClient NEEDS to be created, especially when running in Development ENV. Otherwise we get SSL errors. Need to fix that in production, but good enough for mvp
         $guzzleClient = new \GuzzleHttp\Client(array( 'curl' => array( CURLOPT_SSL_VERIFYPEER => false, ), ));
 
@@ -90,24 +91,35 @@ class AIController extends Controller
         {
             //Yes
             //Save chat entries with ChatHistory ID
-            ChatEntry::create(['Sender' => 'user', 'Content' => $request->chat, 'chat_history_id'=>$request->chatHistoryID]);
+            $CH = $request->chatHistoryID;
+            ChatEntry::create(['Sender' => 'user', 'Content' => $request->chat, 'chat_history_id'=>$CH]);
         }else{
             //Generate title from first prompt
             $titleGen = $client->completions()->create([
                 'prompt' => 'Generate a short chat history title for the following prompt: "'.$request->chat.'" Answer only with the generated title.'
             ]);
             //Create ChatHistory
-            $CH = ChatHistory::create(['ChatTitle' => $titleGen['choices'][0]['text']]);
+            $NCH = ChatHistory::create(['ChatTitle' => $titleGen['choices'][0]['text']]);
+            $CH = $NCH->id;
             //Save Chat Entry with this ChatHistoryID
             ChatEntry::create(['Sender' => 'user', 'Content' => $request->chat, 'chat_history_id'=>$CH->id]);
         }
 
         //Get whole chat history from client for simplicity
-
+        $FCH = $request->history;
 
         //Send whole history to LLM
+        $result = $client->chat()->create([
+            'messages'=>$FCH
+        ]);
+
+        $responseText = $result['choices'][0]['message']['content'];
+
+        //Save response to CH in db
+        ChatEntry::create(['Sender' => 'user', 'Content' => $responseText]);
 
         //Return Response
+        return json_encode($result);
     }
 
 }
