@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ChatEntry;
+use App\Models\ChatHistory;
 use Illuminate\Http\Request;
 use OpenAI\Laravel\Facades\OpenAI;
 use OpenAI\Responses\Completions\CreateResponse;
@@ -91,13 +92,21 @@ class AIController extends Controller
             //Save chat entries with ChatHistory ID
             ChatEntry::create(['Sender' => 'user', 'Content' => $request->chat, 'chat_history_id'=>$request->chatHistoryID]);
         }else{
-
-            //If not, create one
             //Generate title from first prompt
+            $titleGen = $client->completions()->create([
+                'prompt' => 'Generate a short chat history title for the following prompt: "'.$request->chat.'" Answer only with the generated title.'
+            ]);
             //Create ChatHistory
+            $CH = ChatHistory::create(['ChatTitle' => $titleGen['choices'][0]['text']]);
             //Save Chat Entry with this ChatHistoryID
+            ChatEntry::create(['Sender' => 'user', 'Content' => $request->chat, 'chat_history_id'=>$CH->id]);
         }
+
+        //Get whole chat history from client for simplicity
+
+
         //Send whole history to LLM
+
         //Return Response
     }
 
