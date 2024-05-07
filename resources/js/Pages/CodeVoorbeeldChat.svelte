@@ -53,5 +53,5 @@
 <form on:submit|preventDefault={()=>{
     generateChat()
 }}>
-<input class="border-2 text-black" type="text" id="prompt" bind:value={input}>
+    <input class="border-2 text-black" type="text" id="prompt" bind:value={input}>
 </form>
