@@ -16,8 +16,8 @@
 </div>
 
 <form on:submit|preventDefault={()=>{
-    $chatPrompt.history.push({role:"user", content:$chatPrompt.input})
+    $chatPrompt.history.push({role:"user", content:$chatPrompt.chat})
     $chatPrompt.post('/ChatLLM')
 }}>
-<input class="border-2 text-black" type="text" id="prompt" bind:value={$chatPrompt.input}>
+<input class="border-2 text-black" type="text" id="prompt" bind:value={$chatPrompt.chat}>
 </form>
