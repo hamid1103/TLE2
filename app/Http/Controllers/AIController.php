@@ -113,7 +113,7 @@ class AIController extends Controller
         $responseText = $result['choices'][0]['message']['content'];
 
         //Save response to CH in db
-        ChatEntry::create(['Sender' => 'user', 'Content' => $responseText]);
+        ChatEntry::create(['Sender' => 'user', 'Content' => strval($responseText),  'chat_history_id'=>$CH]);
 
         //Return Response
         return json_encode($result);
