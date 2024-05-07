@@ -95,14 +95,11 @@ class AIController extends Controller
             ChatEntry::create(['Sender' => 'user', 'Content' => $request->chat, 'chat_history_id'=>$CH]);
         }else{
             //Generate title from first prompt
-            $titleGen = $client->completions()->create([
-                'prompt' => 'Generate a short chat history title for the following prompt: "'.$request->chat.'" Answer only with the generated title.'
-            ]);
-            //Create ChatHistory
-            $NCH = ChatHistory::create(['ChatTitle' => $titleGen['choices'][0]['text']]);
+
+            $NCH = ChatHistory::create(['ChatTitle' => $request->chat]);
             $CH = $NCH->id;
             //Save Chat Entry with this ChatHistoryID
-            ChatEntry::create(['Sender' => 'user', 'Content' => $request->chat, 'chat_history_id'=>$CH->id]);
+            ChatEntry::create(['Sender' => 'user', 'Content' => $request->chat, 'chat_history_id'=>$CH]);
         }
 
         //Get whole chat history from client for simplicity

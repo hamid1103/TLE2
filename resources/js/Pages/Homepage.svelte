@@ -1,6 +1,23 @@
 <script>
+    import {useForm} from "@inertiajs/svelte";
+
+
     export let hoihoi = "Default Name";
+
+    let chatPrompt = useForm({
+        chat: "",
+        history: []
+    })
+
 </script>
-<h2 class="text-3xl text-gold underline bg-gray-900">
-    Hello, {hoihoi}
-</h2>
+
+<div class="border bg-gold w-full h-1/2">
+
+</div>
+
+<form on:submit|preventDefault={()=>{
+    $chatPrompt.history.push({role:"user", content:$chatPrompt.input})
+    $chatPrompt.post('/ChatLLM')
+}}>
+<input class="border-2 text-black" type="text" id="prompt" bind:value={$chatPrompt.input}>
+</form>
