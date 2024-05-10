@@ -7,6 +7,7 @@ use App\Models\ChatHistory;
 use Illuminate\Http\Request;
 use OpenAI\Laravel\Facades\OpenAI;
 use OpenAI\Responses\Completions\CreateResponse;
+use OpenAI\Testing\ClientFake;
 
 
 class AIController extends Controller
@@ -72,18 +73,31 @@ class AIController extends Controller
         }
     }
 
+    public function getHistory(Request $request, $id)
+    {
+        return ChatHistory::find($id)->ChatEntries;
+    }
+
     public function ChatPrompt(Request $request)
     {
         $CH = 0;
         //GuzzleClient NEEDS to be created, especially when running in Development ENV. Otherwise we get SSL errors. Need to fix that in production, but good enough for mvp
         $guzzleClient = new \GuzzleHttp\Client(array( 'curl' => array( CURLOPT_SSL_VERIFYPEER => false, ), ));
 
-        $client = \OpenAI::factory()
+        /*$client = \OpenAI::factory()
             ->withBaseUri(env('OPENAI_API_BASE').env('ENGINE_GPT_NAME'))
             ->withHttpHeader('api-key', env('OPENAI_API_KEY'))
             ->withQueryParam('api-version', env('OPENAI_API_VERSION'))
             ->withHttpClient($guzzleClient)
-            ->make();
+            ->make();*/
+
+        $client = new ClientFake([
+            \OpenAI\Responses\Chat\CreateResponse::fake([
+                'choices'=>[
+                    ['text'=>'fake response...']
+                ]
+            ])
+        ]);
 
         $chatHistory = [];
         //Check if $request has a chatHistory ID with it
@@ -109,14 +123,15 @@ class AIController extends Controller
         $result = $client->chat()->create([
             'messages'=>$FCH
         ]);
-
         $responseText = $result['choices'][0]['message']['content'];
 
         //Save response to CH in db
         ChatEntry::create(['Sender' => 'user', 'Content' => strval($responseText),  'chat_history_id'=>$CH]);
 
         //Return Response
-        return json_encode($result);
+        $response = json_encode(array('chatID'=>$CH, 'response'=>$responseText));
+
+        return $response;
     }
 
 }

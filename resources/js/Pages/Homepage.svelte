@@ -1,13 +1,27 @@
 <script>
-    import {useForm} from "@inertiajs/svelte";
+    import {page, useForm} from "@inertiajs/svelte";
+    import axios from "axios";
 
+    export let chatHistory = [], chatList=[];
 
-    export let hoihoi = "Default Name";
+    let chatHistoryID, input="";
 
-    let chatPrompt = useForm({
-        chat: "",
-        history: []
-    })
+    const generateChat = async ()=>{
+        chatHistory = [...chatHistory, {role:"user", content: input}]
+        //verstuur request
+        axios.post("/ChatLLM",{
+            chat: input,
+            chatHistoryID: chatHistoryID||undefined,
+            history: chatHistory,
+        })
+            .then((res)=>{
+                if(res.chatID){
+                    chatHistoryID=res.data.chatID
+                }
+                chatHistory = [...chatHistory, {role:'assistant', content: res.data.response}]
+                console.log(res)
+            })
+    }
 
     function handleSubmit() {
         chatPrompt.history.push({ role: "user", content: chatPrompt.chat });
@@ -185,5 +199,3 @@
 
 
 </body>
-
-
