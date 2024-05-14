@@ -2,7 +2,12 @@
     import {page, useForm} from "@inertiajs/svelte";
     import axios from "axios";
 
-    export let chatHistory = [], chatList = [];
+    let StandardChatStart = [{role: "system", content: `You are an AI that helps students with formulating questions in a classroom environment. When the user asks you
+    a question, you may not answer. Instead you review the question and give strict feedback.
+    You can also ask the user to provide more context if you need it. Make sure your replies are in the same language as that of the user.
+    [Example 1] user: "I am unable to understand the reason this teacher gave me a failing grade on this assignment." assistant: "You should formulate a question where you ask about your grade and what went wrong. 1. make sure to be respectfull. 2. make sure to mentiont what you think you did correctly and ask about why that wasn't enough."`},
+        {role: "assistant", content: "Hoi, ik ben hier om je te helpen met stellen van vragen!"}]
+    export let chatHistory = StandardChatStart, chatList = [];
 
     let chatHistoryID, input = "";
 
@@ -16,10 +21,15 @@
         })
             .then((res) => {
                 if (res.chatID) {
+                    if(chatHistoryID === undefined)
+                    {
+
+                    }
                     chatHistoryID = res.data.chatID
                 }
                 chatHistory = [...chatHistory, {role: 'assistant', content: res.data.response}]
                 console.log(res)
+                input = ""
             })
     }
 
@@ -83,7 +93,7 @@
 
 <div class="overflow-hidden h-screen">
     <div class="flex">
-        <section class="border bg-blue-300 w-1/4 flex items-center flex-col h-screen overflow-auto">
+        <section class="border bg-blue-300 w-1/6 flex items-center flex-col h-screen overflow-auto">
             <div class="text-center">
                 <p class="text-2xl">Chatgeschiedenis</p>
             </div>
@@ -101,10 +111,14 @@
                     {chat.ChatTitle}
                 </button>
             {/each}
+            <button class="bg-gold w-24 text-xl rounded-md" on:click={()=>{
+                chatHistoryID = 0
+                chatHistory = StandardChatStart
+            }}>+</button>
 
         </section>
 
-        <div class="flex flex-col justify-between w-3/4">
+        <div class="flex flex-col justify-between w-5/6">
             <!--Header-->
             <header
                 class="header bg-gray-800 text-white w-full h-12 flex justify-between items-center">

@@ -84,20 +84,20 @@ class AIController extends Controller
         //GuzzleClient NEEDS to be created, especially when running in Development ENV. Otherwise we get SSL errors. Need to fix that in production, but good enough for mvp
         $guzzleClient = new \GuzzleHttp\Client(array( 'curl' => array( CURLOPT_SSL_VERIFYPEER => false, ), ));
 
-        /*$client = \OpenAI::factory()
+        $client = \OpenAI::factory()
             ->withBaseUri(env('OPENAI_API_BASE').env('ENGINE_GPT_NAME'))
             ->withHttpHeader('api-key', env('OPENAI_API_KEY'))
             ->withQueryParam('api-version', env('OPENAI_API_VERSION'))
             ->withHttpClient($guzzleClient)
-            ->make();*/
+            ->make();
 
-        $client = new ClientFake([
+        /*$client = new ClientFake([
             \OpenAI\Responses\Chat\CreateResponse::fake([
                 'choices'=>[
                     ['text'=>'fake response...']
                 ]
             ])
-        ]);
+        ]);*/
 
         $chatHistory = [];
         //Check if $request has a chatHistory ID with it
