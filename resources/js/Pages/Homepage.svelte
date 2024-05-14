@@ -33,6 +33,16 @@
             })
     }
 
+    let files;
+
+    $: if (files) {
+        console.log(files);
+
+        for (const file of files) {
+            console.log(`${file.name}: ${file.size} bytes`);
+        }
+    }
+
 </script>
 
 <style>
@@ -155,6 +165,19 @@
                 <div class="container mx-auto flex justify-end h-20">
                     <form on:submit|preventDefault={generateChat}
                           class="bg-gray-100 flex items-center border border-gray-300 p-2 w-full">
+                        <input class="hidden" bind:files id="many" multiple type="file" />
+
+                        <label for="many" class="bg-white border border-gray-300 text-white text-sm rounded-l-full p-2 pl-3 cursor-pointer"
+                               style="width: 3.5rem; height: 2.35rem; border-right: none;">
+                            <span style="font-size: 1.5rem;">🔗</span>
+                        </label>
+
+                        <!--{#if files}-->
+                        <!--    <h2>Selected files:</h2>-->
+                        <!--    {#each Array.from(files) as file}-->
+                        <!--        <p>{file.name} ({file.size} bytes)</p>-->
+                        <!--    {/each}-->
+                        <!--{/if}-->
                         <input
                             class="bg-white border border-gray-300 w-11/12 w-1/2 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2  ml-8"
                             type="text"
