@@ -165,7 +165,7 @@
                 <div class="container mx-auto flex justify-end h-20">
                     <form on:submit|preventDefault={generateChat}
                           class="bg-gray-100 flex items-center border border-gray-300 p-2 w-full">
-                        <input class="hidden" bind:files id="many" multiple type="file" />
+                        <input class="hidden" bind:files id="many" multiple type="file" accept="application/msword,application/pdf"/>
 
                         <label for="many" class="bg-white border border-gray-300 text-white text-sm rounded-l-full p-2 pl-3 cursor-pointer"
                                style="width: 3.5rem; height: 2.35rem; border-right: none;">
