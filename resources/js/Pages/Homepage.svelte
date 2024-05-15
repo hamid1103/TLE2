@@ -179,8 +179,9 @@
                         <!--    {/each}-->
                         <!--{/if}-->
                         <input
-                            class="bg-white border border-gray-300 w-11/12 w-1/2 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2  ml-8"
+                            class="bg-white border border-gray-300 w-11/12 text-black text-sm rounded-r-full focus:ring-blue-500 focus:border-blue-500 p-2"
                             type="text"
+                            style="border-left: none;"
                             id="prompt"
                             bind:value={input}
                             placeholder="Typ uw bericht hier..."
