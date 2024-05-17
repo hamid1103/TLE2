@@ -86,16 +86,16 @@
     .speech-bubble-user:after {
         content: '';
         position: absolute;
-        left: 0;
+        right: 0;
         top: 50%;
         width: 0;
         height: 0;
         border: 11px solid transparent;
-        border-right-color: #3b82f6;
-        border-left: 0;
+        border-left-color: #3b82f6;
+        border-right: 0;
         border-top: 0;
         margin-top: -5.5px;
-        margin-left: -11px;
+        margin-right: -11px;
     }
 
 </style>
@@ -143,7 +143,7 @@
 
                 {#each chatHistory as chat}
                     {#if chat.role === "user"}
-                        <div class="mb-2 w-2/3 flex justify-start">
+                        <div class="mb-2 w-2/3 flex justify-end">
                             <div class="w-2/3">
                                 <div class="speech-bubble-user ">
                                     {chat.content}
@@ -153,7 +153,7 @@
                         </div>
 
                     {:else if chat.role === "assistant"}
-                        <div class="mb-2 w-2/3 flex justify-end">
+                        <div class="mb-2 w-2/3 flex justify-start">
                             <div class="w-2/3">
                                 <div class="speech-bubble-ai">
                                     {chat.content}
