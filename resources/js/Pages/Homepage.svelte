@@ -103,13 +103,13 @@
 
 <div class="overflow-hidden h-screen">
     <div class="flex">
-        <section class="border bg-blue-300 w-1/6 flex items-center flex-col h-screen overflow-auto">
+        <section class="border bg-[#398DA9] w-1/6 flex items-center flex-col h-screen overflow-auto">
             <div class="text-center">
                 <p class="text-2xl">Chatgeschiedenis</p>
             </div>
 
             {#each chatList as chat}
-                <button class="bg-yellow-100 m-4 text-xl rounded-md" on:click={()=>{
+                <button class="bg-[#F4FFFE] m-4 text-xl rounded-md" on:click={()=>{
             chatHistoryID = chat.id
             axios.get('/getHistory/'+chatHistoryID)
             .then((res)=>{
@@ -131,7 +131,7 @@
         <div class="flex flex-col justify-between w-5/6">
             <!--Header-->
             <header
-                class="header bg-gray-800 text-white w-full h-12 flex justify-between items-center">
+                class="header bg-[#40A0C1] text-white w-full h-12 flex justify-between items-center">
                 <div
                     class="logo relative before:content-[''] before:inline-block before:w-10 before:h-10 before:bg-white before:rounded-full before:ml-2.5"></div>
                 <div
@@ -139,7 +139,7 @@
             </header>
 
             <!--Chat-->
-            <section class="flex flex-col items-center align-middle h-fit justify-center font-sans bg-white font-sans text-lg">
+            <section class="flex flex-col items-center align-middle h-fit justify-center font-sans bg-[#F4FFFE] font-sans text-lg">
 
                 {#each chatHistory as chat}
                     {#if chat.role === "user"}
@@ -164,7 +164,7 @@
 
                 <div class="container mx-auto flex justify-end h-20">
                     <form on:submit|preventDefault={generateChat}
-                          class="bg-gray-100 flex items-center border border-gray-300 p-2 w-full">
+                          class="bg-[#40A0C1] flex items-center border border-gray-300 p-2 w-full">
                         <input class="hidden" bind:files id="many" multiple type="file" accept="application/msword,application/pdf"/>
 
                         <label for="many" class="bg-white border border-gray-300 text-white text-sm rounded-l-full p-2 pl-3 cursor-pointer"
@@ -188,7 +188,7 @@
                         />
                         <button
                             type="submit"
-                            class="bg-blue-500 text-white text-sm rounded-full p-2 ml-4"
+                            class="bg-white text-2xl rounded-full p-2 ml-4"
                             style="width: 3.5rem; height: 3.5rem;"
                         >
                             ➤
