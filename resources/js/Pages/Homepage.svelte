@@ -86,16 +86,16 @@
     .speech-bubble-user:after {
         content: '';
         position: absolute;
-        left: 0;
+        right: 0;
         top: 50%;
         width: 0;
         height: 0;
         border: 11px solid transparent;
-        border-right-color: #3b82f6;
-        border-left: 0;
+        border-left-color: #3b82f6;
+        border-right: 0;
         border-top: 0;
         margin-top: -5.5px;
-        margin-left: -11px;
+        margin-right: -11px;
     }
 
 </style>
