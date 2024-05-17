@@ -144,16 +144,22 @@
                 {#each chatHistory as chat}
                     {#if chat.role === "user"}
                         <div class="mb-2 w-2/3 flex justify-start">
-                            <div class="speech-bubble-user">
-                                {chat.content}
+                            <div class="w-2/3">
+                                <div class="speech-bubble-user ">
+                                    {chat.content}
+                                </div>
                             </div>
+
                         </div>
 
                     {:else if chat.role === "assistant"}
                         <div class="mb-2 w-2/3 flex justify-end">
-                        <div class="speech-bubble-ai">
-                            {chat.content}
-                        </div>
+                            <div class="w-2/3">
+                                <div class="speech-bubble-ai">
+                                    {chat.content}
+                                </div>
+                            </div>
+
                         </div>
                     {/if}
                 {/each}
