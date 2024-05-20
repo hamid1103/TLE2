@@ -2,10 +2,12 @@
     import {page, useForm} from "@inertiajs/svelte";
     import axios from "axios";
 
-    let StandardChatStart = [{role: "system", content: `You are an AI that helps students with formulating questions in a classroom environment. When the user asks you
+    let StandardChatStart = [{
+        role: "system", content: `You are an AI that helps students with formulating questions in a classroom environment. When the user asks you
     a question, you may not answer. Instead you review the question and give strict feedback.
     You can also ask the user to provide more context if you need it. Make sure your replies are in the same language as that of the user.
-    [Example 1] user: "I am unable to understand the reason this teacher gave me a failing grade on this assignment." assistant: "You should formulate a question where you ask about your grade and what went wrong. 1. make sure to be respectfull. 2. make sure to mentiont what you think you did correctly and ask about why that wasn't enough."`},
+    [Example 1] user: "I am unable to understand the reason this teacher gave me a failing grade on this assignment." assistant: "You should formulate a question where you ask about your grade and what went wrong. 1. make sure to be respectfull. 2. make sure to mentiont what you think you did correctly and ask about why that wasn't enough."`
+    },
         {role: "assistant", content: "Hoi, ik ben hier om je te helpen met stellen van vragen!"}]
     export let chatHistory = StandardChatStart, chatList = [];
 
@@ -21,8 +23,7 @@
         })
             .then((res) => {
                 if (res.chatID) {
-                    if(chatHistoryID === undefined)
-                    {
+                    if (chatHistoryID === undefined) {
 
                     }
                     chatHistoryID = res.data.chatID
@@ -109,7 +110,8 @@
             </div>
 
             {#each chatList as chat}
-                <button class="bg-[#F4FFFE] m-4 text-xl rounded-md" on:click={()=>{
+                <div class="bg-[#F4FFFE] flex m-4 text-xl rounded-md">
+                    <button on:click={()=>{
             chatHistoryID = chat.id
             axios.get('/getHistory/'+chatHistoryID)
             .then((res)=>{
@@ -118,13 +120,27 @@
             })
         }
         }>
-                    {chat.ChatTitle}
-                </button>
+                        {chat.ChatTitle}
+                    </button>
+
+                    <button class="bg-red-500" on:click={()=>{
+                        axios.delete(`/delChat/${chat.id}`)
+                        .then((res)=>{
+                            console.log(res)
+                            chatList = res.data
+                        })
+                    }}>
+                        X
+                    </button>
+
+                </div>
+
             {/each}
             <button class="bg-gold w-24 text-xl rounded-md" on:click={()=>{
                 chatHistoryID = 0
                 chatHistory = StandardChatStart
-            }}>+</button>
+            }}>+
+            </button>
 
         </section>
 
@@ -139,7 +155,8 @@
             </header>
 
             <!--Chat-->
-            <section class="flex flex-col items-center align-middle h-fit justify-center font-sans bg-[#F4FFFE] font-sans text-lg">
+            <section
+                class="flex flex-col items-center align-middle h-fit justify-center font-sans bg-[#F4FFFE] font-sans text-lg">
 
                 {#each chatHistory as chat}
                     {#if chat.role === "user"}
@@ -171,9 +188,11 @@
                 <div class="container mx-auto flex justify-end h-20">
                     <form on:submit|preventDefault={generateChat}
                           class="bg-[#40A0C1] flex items-center border border-gray-300 p-2 w-full">
-                        <input class="hidden" bind:files id="many" multiple type="file" accept="application/msword,application/pdf"/>
+                        <input class="hidden" bind:files id="many" multiple type="file"
+                               accept="application/msword,application/pdf"/>
 
-                        <label for="many" class="bg-white border border-gray-300 text-white text-sm rounded-l-full p-2 pl-3 cursor-pointer"
+                        <label for="many"
+                               class="bg-white border border-gray-300 text-white text-sm rounded-l-full p-2 pl-3 cursor-pointer"
                                style="width: 3.5rem; height: 2.35rem; border-right: none;">
                             <span style="font-size: 1.5rem;">🔗</span>
                         </label>
