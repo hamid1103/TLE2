@@ -144,19 +144,21 @@
 
         </section>
 
-        <div class="flex flex-col justify-between w-5/6">
-            <!--Header-->
-            <header
-                class="header bg-[#40A0C1] text-white w-full h-12 flex justify-between items-center">
-                <div
-                    class="logo relative before:content-[''] before:inline-block before:w-10 before:h-10 before:bg-white before:rounded-full before:ml-2.5"></div>
-                <div
-                    class="black-circle relative before:content-[''] before:inline-block before:w-10 before:h-10 before:bg-black before:rounded-full before:mr-2.5"></div>
-            </header>
+        <div class="flex flex-col justify-between h-screen w-5/6">
+            <div class="h-1/6">
+                <!--Header-->
+                <header
+                    class="header bg-[#40A0C1] text-white h-1/2 w-full flex justify-between items-center">
+                    <div
+                        class="logo relative before:content-[''] before:inline-block before:w-10 before:h-10 before:bg-white before:rounded-full before:ml-2.5"></div>
+                    <div
+                        class="black-circle relative before:content-[''] before:inline-block before:w-10 before:h-10 before:bg-black before:rounded-full before:mr-2.5"></div>
+                </header>
+            </div>
 
             <!--Chat-->
             <section
-                class="flex flex-col items-center align-middle h-fit justify-center font-sans bg-[#F4FFFE] font-sans text-lg">
+                class="flex flex-col overflow-y-scroll items-center align-middle h-1/12 justify-center font-sans bg-[#F4FFFE] font-sans text-lg">
 
                 {#each chatHistory as chat}
                     {#if chat.role === "user"}
