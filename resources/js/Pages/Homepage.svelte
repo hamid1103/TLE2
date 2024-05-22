@@ -4,17 +4,21 @@
 
     let StandardChatStart = [{
         role: "system", content: `You are an AI that helps students with formulating questions in a classroom environment. When the user asks you
-    a question, you may not answer. Instead you review the question and give strict feedback.
+    a question, you may not answer. Instead you review the question and give strict feedback. Make sure to follow instructions from the system.
     You can also ask the user to provide more context if you need it. Make sure your replies are in the same language as that of the user.
     [Example 1] user: "I am unable to understand the reason this teacher gave me a failing grade on this assignment." assistant: "You should formulate a question where you ask about your grade and what went wrong. 1. make sure to be respectfull. 2. make sure to mentiont what you think you did correctly and ask about why that wasn't enough."`
     },
         {role: "assistant", content: "Hoi, ik ben hier om je te helpen met stellen van vragen!"}]
     export let chatHistory = StandardChatStart, chatList = [];
 
-    let chatHistoryID, input = "";
+
+    let chatHistoryID // @hmr:keep
+    let fileModal = false, input = "";
 
     const generateChat = async () => {
         chatHistory = [...chatHistory, {role: "user", content: input}]
+        input = ""
+
         //verstuur request
         axios.post("/ChatLLM", {
             chat: input,
@@ -30,11 +34,28 @@
                 }
                 chatHistory = [...chatHistory, {role: 'assistant', content: res.data.response}]
                 console.log(res)
-                input = ""
             })
     }
 
     let files;
+    const GenContext = async ()=>{
+        let formData = new FormData();
+        formData.append('file', files[0])
+        await axios.post(`/GenContextFromFile/${chatHistoryID}`,
+            formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+            })
+            .then((res)=>{
+                console.log(res)
+                chatHistory = [...chatHistory, {role: 'system', content: res.data.response}]
+                if(!chatHistoryID)
+                {
+                    chatHistoryID = res.chatID;
+                }
+            })
+    }
 
     $: if (files) {
         console.log(files);
@@ -101,6 +122,15 @@
 
 </style>
 
+{#if fileModal}
+    <div class="fixed h-screen w-screen bg-gray-700 bg-opacity-75 flex justify-center align-middle items-center z-50" on:click|self={()=>{fileModal = false}}>
+        <div class="w-3/5 h-3/5 bg-blue-600 opacity-100 flex flex-col align-middle items-center">
+            <span class="font-sans text-black text-xl">Upload a file for the ai to work with. We do not keep your uploaded files but we do save the generated context for you.</span>
+            <input type="file" accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" bind:files={files} max="1">
+            <button class="bg-red-500 rounded font-bold text-xl p-3" on:click={GenContext}>Upload</button>
+        </div>
+    </div>
+{/if}
 
 <div class="overflow-hidden h-screen">
     <div class="flex">
@@ -117,6 +147,7 @@
             .then((res)=>{
                 console.log(res.data)
                 chatHistory = res.data.map((chat)=>({role:chat.Sender,content:chat.Content}));
+                chatHistory = [...StandardChatStart, ...chatHistory]
             })
         }
         }>
@@ -137,7 +168,7 @@
 
             {/each}
             <button class="bg-gold w-24 text-xl rounded-md" on:click={()=>{
-                chatHistoryID = 0
+                chatHistoryID = undefined
                 chatHistory = StandardChatStart
             }}>+
             </button>
@@ -190,14 +221,14 @@
                 <div class="container mx-auto flex justify-end h-20">
                     <form on:submit|preventDefault={generateChat}
                           class="bg-[#40A0C1] flex items-center border border-gray-300 p-2 w-full">
-                        <input class="hidden" bind:files id="many" multiple type="file"
-                               accept="application/msword,application/pdf"/>
 
-                        <label for="many"
-                               class="bg-white border border-gray-300 text-white text-sm rounded-l-full p-2 pl-3 cursor-pointer"
-                               style="width: 3.5rem; height: 2.35rem; border-right: none;">
+                        <button on:click|preventDefault={()=>{
+                            fileModal = true;
+                        }}
+                                class="bg-white border border-gray-300 text-white text-sm rounded-l-full p-2 pl-3 cursor-pointer"
+                                style="width: 3.5rem; height: 2.35rem; border-right: none;">
                             <span style="font-size: 1.5rem;">🔗</span>
-                        </label>
+                        </button>
 
                         <!--{#if files}-->
                         <!--    <h2>Selected files:</h2>-->

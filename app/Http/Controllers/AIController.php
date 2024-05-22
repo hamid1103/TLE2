@@ -4,11 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\ChatEntry;
 use App\Models\ChatHistory;
+use Carbon\Carbon;
+use Carbon\Traits\Date;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use ConvertApi\ConvertApi;
 use OpenAI\Laravel\Facades\OpenAI;
 use OpenAI\Responses\Completions\CreateResponse;
 use OpenAI\Testing\ClientFake;
+use function PHPUnit\Framework\throwException;
 
 
 class AIController extends Controller
@@ -30,7 +35,6 @@ class AIController extends Controller
         ]);
 
         return json_encode($completion);
-
     }
 
     public function TestBasicLLMChatPrompt(Request $request)
@@ -147,6 +151,98 @@ class AIController extends Controller
             return response(json_encode($e), 500);
         }
 
+    }
+
+    public function GenerateContextFromFile(Request $request, $id)
+    {
+        if(!isset($id)||$id==="undefined")
+        {
+            //If new chat without id, create new chat
+            $newChat = ChatHistory::create(['ChatTitle'=>Carbon::now()->toDateTimeString()]);
+            $id = $newChat->id;
+        }
+            //detect upload file type
+            $fileBlob = $request->file('file');
+            if(isset($fileBlob))
+            {
+                //GuzzleClient NEEDS to be created, especially when running in Development ENV. Otherwise we get SSL errors. Need to fix that in production, but good enough for mvp
+                $guzzleClient = new \GuzzleHttp\Client(array( 'curl' => array( CURLOPT_SSL_VERIFYPEER => false, ), ));
+
+                $client = \OpenAI::factory()
+                    ->withBaseUri(env('OPENAI_API_BASE').env('ENGINE_GPT_NAME'))
+                    ->withHttpHeader('api-key', env('OPENAI_API_KEY'))
+                    ->withQueryParam('api-version', env('OPENAI_API_VERSION'))
+                    ->withHttpClient($guzzleClient)
+                    ->make();
+
+                $Filename = $fileBlob->getClientOriginalName();
+                $chatHistory = ChatHistory::findOrFail($id);
+
+                //convert to text using api
+
+                //Detect pdf or doc
+                $fileMimeT = $fileBlob->getMimeType();
+
+                //Save File
+                $path='public/uploads/'.$id.$Filename;
+                Storage::put($path, $fileBlob->getContent());
+
+                //Convert to text | Will need to do manual requests cuz the ConvertAPI library sucks so much ass and the docs are lacking as fuck
+                $gc = new \GuzzleHttp\Client(array( 'curl' => array( CURLOPT_SSL_VERIFYPEER => false, ), ));
+                $headers = [
+                    'Content-Type' => 'multipart/form-data',
+                    'Accept' => 'application/json'
+                ];
+                $options = [
+                    'multipart' => [
+                        [
+                            'name' => 'File',
+                            'contents' => $fileBlob->getContent()
+                        ],
+                        [
+                            'name' => 'StoreFile',
+                            'contents' => 'false'
+                        ],
+                        [
+                            'name' => 'FileName',
+                            'contents' => $fileBlob->getBasename()
+                        ]
+                    ]];
+                switch ($fileMimeT) {
+                    case "application/pdf":
+                        $request = new \GuzzleHttp\Psr7\Request('POST', 'https://v2.convertapi.com/convert/pdf/to/txt?Secret='.env('convertApiSecret'), $headers);
+                        $res = $gc->sendAsync($request, $options)->wait();
+                        $textResult = $res->getBody()->Files[0]->FileData;
+                        break;
+                    case "application/msword":
+                        $request = new \GuzzleHttp\Psr7\Request('POST', 'https://v2.convertapi.com/convert/doc/to/txt?Secret='.env('convertApiSecret'), $headers);
+                        $res = $gc->sendAsync($request, $options)->wait();
+                        $textResult = $res->getBody()->Files[0]->FileData;
+                        break;
+                    case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                        $request = new \GuzzleHttp\Psr7\Request('POST', 'https://v2.convertapi.com/convert/docx/to/txt?Secret='.env('convertApiSecret'), $headers);
+                        $res = $gc->sendAsync($request, $options)->wait();
+                        $textResult = $res->getBody()->Files[0]->FileData;
+                        break;
+                    default:
+                        $textResult = throw new \ErrorException("File not supported. Please use doc/docx/pdf. Received: " . $fileMimeT);
+                        break;
+                }
+
+                //use text completion model to generate a context prompt
+                $CompletionResponse = $client->completions()->create([
+                    'prompt' => 'Try to reduce the following text without getting rid of important information, data or explanations: '.$textResult,
+                    'temperature' => 0
+                ]);
+
+                //Save system message to db
+                ChatEntry::create(['Content' => $CompletionResponse->choices[0]->text, 'Sender' => 'System', 'chat_history_id' =>$id]);
+
+                //return new System Message and or request status.
+                return json_encode(array('chatID'=>$id, 'role'=>'system', 'response'=>$CompletionResponse->choices[0]));
+            }else{
+                throw new \ErrorException("file not set");
+            }
     }
 
 }
