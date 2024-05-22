@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ChatEntry;
 use App\Models\ChatHistory;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use OpenAI\Laravel\Facades\OpenAI;
 use OpenAI\Responses\Completions\CreateResponse;
 use OpenAI\Testing\ClientFake;
@@ -132,6 +133,20 @@ class AIController extends Controller
         $response = json_encode(array('chatID'=>$CH, 'response'=>$responseText));
 
         return $response;
+    }
+
+    public function removeChatHistory(Request $request, $id)
+    {
+        try {
+            ChatEntry::where('chat_history_id', '=',$id)->delete();
+            ChatHistory::find($id)->delete();
+            $response = ChatHistory::all();
+            return response($response, 200);
+        } catch (\Exception $e)
+        {
+            return response(json_encode($e), 500);
+        }
+
     }
 
 }

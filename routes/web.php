@@ -8,4 +8,5 @@ Route::get('/', [HomeController::class, 'index']);
 Route::get('/getHistory/{id}',[AIController::class, 'getHistory']);
 Route::get('/TestFakePrompt', [AIController::class, 'testFakeCompletionsPrompt']);
 Route::get('/TestBasicChatPrompt', [AIController::class, 'TestBasicLLMChatPrompt']);
+Route::delete('/delChat/{id}', [AIController::class, 'removeChatHistory']);
 Route::post('/ChatLLM', [AIController::class, 'ChatPrompt']);
