@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use ConvertApi\ConvertApi;
+use Inertia\Response;
 use OpenAI\Laravel\Facades\OpenAI;
 use OpenAI\Responses\Completions\CreateResponse;
 use OpenAI\Testing\ClientFake;
@@ -178,56 +179,8 @@ class AIController extends Controller
                 $Filename = $fileBlob->getClientOriginalName();
                 $chatHistory = ChatHistory::findOrFail($id);
 
-                //convert to text using api
-
-                //Detect pdf or doc
-                $fileMimeT = $fileBlob->getMimeType();
-
-                //Save File
-                $path='public/uploads/'.$id.$Filename;
-                Storage::put($path, $fileBlob->getContent());
-
-                //Convert to text | Will need to do manual requests cuz the ConvertAPI library sucks so much ass and the docs are lacking as fuck
-                $gc = new \GuzzleHttp\Client(array( 'curl' => array( CURLOPT_SSL_VERIFYPEER => false, ), ));
-                $headers = [
-                    'Content-Type' => 'multipart/form-data',
-                    'Accept' => 'application/json'
-                ];
-                $options = [
-                    'multipart' => [
-                        [
-                            'name' => 'File',
-                            'contents' => $fileBlob->getContent()
-                        ],
-                        [
-                            'name' => 'StoreFile',
-                            'contents' => 'false'
-                        ],
-                        [
-                            'name' => 'FileName',
-                            'contents' => $fileBlob->getBasename()
-                        ]
-                    ]];
-                switch ($fileMimeT) {
-                    case "application/pdf":
-                        $request = new \GuzzleHttp\Psr7\Request('POST', 'https://v2.convertapi.com/convert/pdf/to/txt?Secret='.env('convertApiSecret'), $headers);
-                        $res = $gc->sendAsync($request, $options)->wait();
-                        $textResult = $res->getBody()->Files[0]->FileData;
-                        break;
-                    case "application/msword":
-                        $request = new \GuzzleHttp\Psr7\Request('POST', 'https://v2.convertapi.com/convert/doc/to/txt?Secret='.env('convertApiSecret'), $headers);
-                        $res = $gc->sendAsync($request, $options)->wait();
-                        $textResult = $res->getBody()->Files[0]->FileData;
-                        break;
-                    case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-                        $request = new \GuzzleHttp\Psr7\Request('POST', 'https://v2.convertapi.com/convert/docx/to/txt?Secret='.env('convertApiSecret'), $headers);
-                        $res = $gc->sendAsync($request, $options)->wait();
-                        $textResult = $res->getBody()->Files[0]->FileData;
-                        break;
-                    default:
-                        $textResult = throw new \ErrorException("File not supported. Please use doc/docx/pdf. Received: " . $fileMimeT);
-                        break;
-                }
+                //Fetch text conversion from post request (conversion is gonna be done from front-end cuz fuck this shit)
+                $textResult = $request->textContent;
 
                 //use text completion model to generate a context prompt
                 $CompletionResponse = $client->completions()->create([
