@@ -1,6 +1,7 @@
 <script>
     import {page, useForm} from "@inertiajs/svelte";
     import axios from "axios";
+    import FileUploadModal from "@/Components/FileUploadModal.svelte";
 
     let StandardChatStart = [{
         role: "system", content: `You are an AI that helps students with formulating questions in a classroom environment. When the user asks you
@@ -38,24 +39,6 @@
     }
 
     let files;
-    const GenContext = async ()=>{
-        let formData = new FormData();
-        formData.append('file', files[0])
-        await axios.post(`/GenContextFromFile/${chatHistoryID}`,
-            formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-            })
-            .then((res)=>{
-                console.log(res)
-                chatHistory = [...chatHistory, {role: 'system', content: res.data.response}]
-                if(!chatHistoryID)
-                {
-                    chatHistoryID = res.chatID;
-                }
-            })
-    }
 
     $: if (files) {
         console.log(files);
@@ -123,13 +106,8 @@
 </style>
 
 {#if fileModal}
-    <div class="fixed h-screen w-screen bg-gray-700 bg-opacity-75 flex justify-center align-middle items-center z-50" on:click|self={()=>{fileModal = false}}>
-        <div class="w-3/5 h-3/5 bg-blue-600 opacity-100 flex flex-col align-middle items-center">
-            <span class="font-sans text-black text-xl">Upload a file for the ai to work with. We do not keep your uploaded files but we do save the generated context for you.</span>
-            <input type="file" accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" bind:files={files} max="1">
-            <button class="bg-red-500 rounded font-bold text-xl p-3" on:click={GenContext}>Upload</button>
-        </div>
-    </div>
+    <FileUploadModal bind:modal={fileModal} bind:chatHistory={chatHistory} bind:chatHistoryID={chatHistoryID} bind:files={files}>
+    </FileUploadModal>
 {/if}
 
 <div class="overflow-hidden h-screen">

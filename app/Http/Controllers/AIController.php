@@ -40,18 +40,18 @@ class AIController extends Controller
     public function TestBasicLLMChatPrompt(Request $request)
     {
         //GuzzleClient NEEDS to be created, especially when running in Development ENV. Otherwise we get SSL errors. Need to fix that in production, but good enough for mvp
-        $guzzleClient = new \GuzzleHttp\Client(array( 'curl' => array( CURLOPT_SSL_VERIFYPEER => false, ), ));
+        $guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
 
         $client = \OpenAI::factory()
-            ->withBaseUri(env('OPENAI_API_BASE').env('ENGINE_GPT_NAME'))
+            ->withBaseUri(env('OPENAI_API_BASE') . env('ENGINE_GPT_NAME'))
             ->withHttpHeader('api-key', env('OPENAI_API_KEY'))
             ->withQueryParam('api-version', env('OPENAI_API_VERSION'))
             ->withHttpClient($guzzleClient)
             ->make();
 
         $result = $client->chat()->create([
-            'messages'=>[
-                ['role'=>'system', 'content'=>"You are an assistant to students. Your primary goal is to help the user with formulating and asking questions. Try to prevent giving direct answers to questions about learning material.
+            'messages' => [
+                ['role' => 'system', 'content' => "You are an assistant to students. Your primary goal is to help the user with formulating and asking questions. Try to prevent giving direct answers to questions about learning material.
                 Example 1:
                 <user>: 1+1 = 2 right?
                 <assistant>: that is correct.
@@ -59,7 +59,7 @@ class AIController extends Controller
                 <user>: I don't understand the self reflection assignment that my teacher gave me.
                 <assistant>: You could ask the teacher what specific points you need to reflect on. Then you can apply a common self relfection method or use one your teacher has told you to use. If you need help formulating the question you wish to ask your teacher, just tell me.
                 "],
-                ['role'=>'user', 'content'=>'How do I ask my teacher to rethink the grade he gave me for my project?'],
+                ['role' => 'user', 'content' => 'How do I ask my teacher to rethink the grade he gave me for my project?'],
             ]
         ]);
 
@@ -69,11 +69,10 @@ class AIController extends Controller
 
     public function index(Request $request)
     {
-        if(isset($request->ChatID))
-        {
+        if (isset($request->ChatID)) {
             $FullHistory = ChatHistory::find($request->ChatID)->ChatEntries;
             //Return Inertia Page Here with $FullHistory
-        }else{
+        } else {
             //return Inertia Page Here
         }
     }
@@ -87,10 +86,10 @@ class AIController extends Controller
     {
         $CH = 0;
         //GuzzleClient NEEDS to be created, especially when running in Development ENV. Otherwise we get SSL errors. Need to fix that in production, but good enough for mvp
-        $guzzleClient = new \GuzzleHttp\Client(array( 'curl' => array( CURLOPT_SSL_VERIFYPEER => false, ), ));
+        $guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
 
         $client = \OpenAI::factory()
-            ->withBaseUri(env('OPENAI_API_BASE').env('ENGINE_GPT_NAME'))
+            ->withBaseUri(env('OPENAI_API_BASE') . env('ENGINE_GPT_NAME'))
             ->withHttpHeader('api-key', env('OPENAI_API_KEY'))
             ->withQueryParam('api-version', env('OPENAI_API_VERSION'))
             ->withHttpClient($guzzleClient)
@@ -106,19 +105,18 @@ class AIController extends Controller
 
         $chatHistory = [];
         //Check if $request has a chatHistory ID with it
-        if(isset($request->chatHistoryID))
-        {
+        if (isset($request->chatHistoryID)) {
             //Yes
             //Save chat entries with ChatHistory ID
             $CH = $request->chatHistoryID;
-            ChatEntry::create(['Sender' => 'user', 'Content' => $request->chat, 'chat_history_id'=>$CH]);
-        }else{
+            ChatEntry::create(['Sender' => 'user', 'Content' => $request->chat, 'chat_history_id' => $CH]);
+        } else {
             //Generate title from first prompt
 
             $NCH = ChatHistory::create(['ChatTitle' => $request->chat]);
             $CH = $NCH->id;
             //Save Chat Entry with this ChatHistoryID
-            ChatEntry::create(['Sender' => 'user', 'Content' => $request->chat, 'chat_history_id'=>$CH]);
+            ChatEntry::create(['Sender' => 'user', 'Content' => $request->chat, 'chat_history_id' => $CH]);
         }
 
         //Get whole chat history from client for simplicity
@@ -126,15 +124,15 @@ class AIController extends Controller
 
         //Send whole history to LLM
         $result = $client->chat()->create([
-            'messages'=>$FCH
+            'messages' => $FCH
         ]);
         $responseText = $result['choices'][0]['message']['content'];
 
         //Save response to CH in db
-        ChatEntry::create(['Sender' => 'assistant', 'Content' => strval($responseText),  'chat_history_id'=>$CH]);
+        ChatEntry::create(['Sender' => 'assistant', 'Content' => strval($responseText), 'chat_history_id' => $CH]);
 
         //Return Response
-        $response = json_encode(array('chatID'=>$CH, 'response'=>$responseText));
+        $response = json_encode(array('chatID' => $CH, 'response' => $responseText));
 
         return $response;
     }
@@ -142,12 +140,11 @@ class AIController extends Controller
     public function removeChatHistory(Request $request, $id)
     {
         try {
-            ChatEntry::where('chat_history_id', '=',$id)->delete();
+            ChatEntry::where('chat_history_id', '=', $id)->delete();
             ChatHistory::find($id)->delete();
             $response = ChatHistory::all();
             return response($response, 200);
-        } catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             return response(json_encode($e), 500);
         }
 
@@ -155,46 +152,38 @@ class AIController extends Controller
 
     public function GenerateContextFromFile(Request $request, $id)
     {
-        if(!isset($id)||$id==="undefined")
-        {
+        if (!isset($id) || $id === "undefined") {
             //If new chat without id, create new chat
-            $newChat = ChatHistory::create(['ChatTitle'=>Carbon::now()->toDateTimeString()]);
+            $newChat = ChatHistory::create(['ChatTitle' => Carbon::now()->toDateTimeString()]);
             $id = $newChat->id;
         }
-            //detect upload file type
-            $fileBlob = $request->file('file');
-            if(isset($fileBlob))
-            {
-                //GuzzleClient NEEDS to be created, especially when running in Development ENV. Otherwise we get SSL errors. Need to fix that in production, but good enough for mvp
-                $guzzleClient = new \GuzzleHttp\Client(array( 'curl' => array( CURLOPT_SSL_VERIFYPEER => false, ), ));
 
-                $client = \OpenAI::factory()
-                    ->withBaseUri(env('OPENAI_API_BASE').env('ENGINE_GPT_NAME'))
-                    ->withHttpHeader('api-key', env('OPENAI_API_KEY'))
-                    ->withQueryParam('api-version', env('OPENAI_API_VERSION'))
-                    ->withHttpClient($guzzleClient)
-                    ->make();
+        //GuzzleClient NEEDS to be created, especially when running in Development ENV. Otherwise we get SSL errors. Need to fix that in production, but good enough for mvp
+        $guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
 
-                $Filename = $fileBlob->getClientOriginalName();
-                $chatHistory = ChatHistory::findOrFail($id);
+        $client = \OpenAI::factory()
+            ->withBaseUri(env('OPENAI_API_BASE') . env('ENGINE_GPT_NAME'))
+            ->withHttpHeader('api-key', env('OPENAI_API_KEY'))
+            ->withQueryParam('api-version', env('OPENAI_API_VERSION'))
+            ->withHttpClient($guzzleClient)
+            ->make();
 
-                //Fetch text conversion from post request (conversion is gonna be done from front-end cuz fuck this shit)
-                $textResult = $request->textContent;
+        $chatHistory = ChatHistory::findOrFail($id);
 
-                //use text completion model to generate a context prompt
-                $CompletionResponse = $client->completions()->create([
-                    'prompt' => 'Try to reduce the following text without getting rid of important information, data or explanations: '.$textResult,
-                    'temperature' => 0
-                ]);
+        //Fetch text conversion from post request (conversion is gonna be done from front-end cuz fuck this shit)
+        $textResult = $request->text;
 
-                //Save system message to db
-                ChatEntry::create(['Content' => $CompletionResponse->choices[0]->text, 'Sender' => 'System', 'chat_history_id' =>$id]);
+        //Save system message to db
+        ChatEntry::create(['Content' => 'text file submitted by user: '.$textResult, 'Sender' => 'system', 'chat_history_id' => $id]);
 
-                //return new System Message and or request status.
-                return json_encode(array('chatID'=>$id, 'role'=>'system', 'response'=>$CompletionResponse->choices[0]));
-            }else{
-                throw new \ErrorException("file not set");
-            }
+        //return new System Message and or request status.
+        return json_encode(array('chatID' => $id, 'role' => 'system', 'response' => 'text file submitted by user: '.$textResult));
+
+    }
+
+    public function getCSRF(Request $request)
+    {
+        return csrf_token();
     }
 
 }
