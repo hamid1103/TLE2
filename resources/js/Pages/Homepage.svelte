@@ -222,7 +222,7 @@
                     <form on:submit|preventDefault={generateChat}
                           class="bg-[#40A0C1] flex items-center border border-gray-300 p-2 w-full">
 
-                        <button on:click|preventDefault={()=>{
+                        <button type="button" on:click|preventDefault={()=>{
                             fileModal = true;
                         }}
                                 class="bg-white border border-gray-300 text-white text-sm rounded-l-full p-2 pl-3 cursor-pointer"
