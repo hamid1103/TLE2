@@ -11,3 +11,6 @@ Route::get('/TestBasicChatPrompt', [AIController::class, 'TestBasicLLMChatPrompt
 Route::delete('/delChat/{id}', [AIController::class, 'removeChatHistory']);
 Route::post('/ChatLLM', [AIController::class, 'ChatPrompt']);
 Route::get('/subject',[\App\Http\Controllers\SubjectController::class,'subject']);
+Route::get('/register',[\App\Http\Controllers\RegisterController::class,'register']);
+Route::get('/login',[\App\Http\Controllers\LoginController::class,'login']);
+
