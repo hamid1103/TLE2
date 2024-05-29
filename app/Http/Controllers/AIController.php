@@ -150,7 +150,7 @@ class AIController extends Controller
 
     }
 
-    public function GenerateContextFromFile(Request $request, $id)
+    public function GenerateEmbeddingFromText(Request $request, $id)
     {
         if (!isset($id) || $id === "undefined") {
             //If new chat without id, create new chat
@@ -170,6 +170,26 @@ class AIController extends Controller
 
         $chatHistory = ChatHistory::findOrFail($id);
 
+        $textResult = $request->text;
+
+        $embedRes = $client->embeddings()->create([
+            'input'=>$textResult
+        ]);
+
+        foreach ($embedRes->embeddings as $index => $embedding)
+        {
+
+        }
+    }
+
+    public function GenerateContextFromText(Request $request, $id)
+    {
+        if (!isset($id) || $id === "undefined") {
+            //If new chat without id, create new chat
+            $newChat = ChatHistory::create(['ChatTitle' => Carbon::now()->toDateTimeString()]);
+            $id = $newChat->id;
+        }
+
         //Fetch text conversion from post request (conversion is gonna be done from front-end cuz fuck this shit)
         $textResult = $request->text;
 
@@ -178,7 +198,6 @@ class AIController extends Controller
 
         //return new System Message and or request status.
         return json_encode(array('chatID' => $id, 'role' => 'system', 'response' => 'text file submitted by user: '.$textResult));
-
     }
 
     public function getCSRF(Request $request)
