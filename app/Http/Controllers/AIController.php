@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ChatEntry;
 use App\Models\ChatHistory;
+use App\Models\embedding;
 use Carbon\Carbon;
 use Carbon\Traits\Date;
 use Illuminate\Http\Request;
@@ -158,11 +159,11 @@ class AIController extends Controller
             $id = $newChat->id;
         }
 
-        //GuzzleClient NEEDS to be created, especially when running in Development ENV. Otherwise we get SSL errors. Need to fix that in production, but good enough for mvp
+        //GuzzleClient NEEDS to be created, especially when running in Development ENV. Otherwise, we get SSL errors. Need to fix that in production, but good enough for mvp
         $guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
 
         $client = \OpenAI::factory()
-            ->withBaseUri(env('OPENAI_API_BASE') . env('ENGINE_GPT_NAME'))
+            ->withBaseUri(env('OPENAI_API_BASE') . env('ENGINE_ADA_NAME'))
             ->withHttpHeader('api-key', env('OPENAI_API_KEY'))
             ->withQueryParam('api-version', env('OPENAI_API_VERSION'))
             ->withHttpClient($guzzleClient)
@@ -176,10 +177,18 @@ class AIController extends Controller
             'input'=>$textResult
         ]);
 
-        foreach ($embedRes->embeddings as $index => $embedding)
+        //save to csv file
+        $filename = $id.'_Embedding_'.Carbon::now()->toDateString().'.csv';
+        $fp = fopen($filename,'w');
+        foreach ($embedRes->embeddings as $embedding)
         {
-
+            fputcsv($fp, $embedding->embedding);
         }
+        fclose($fp);
+
+        //Save embedding location and relation in DB
+        $DBEmbedding = embedding::create(['file_url' => '/public/embedding/'.$filename, 'chat_id' => $id, 'title' => $filename]);
+
     }
 
     public function GenerateContextFromText(Request $request, $id)
