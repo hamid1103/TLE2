@@ -11,3 +11,4 @@ Route::get('/TestBasicChatPrompt', [AIController::class, 'TestBasicLLMChatPrompt
 Route::delete('/delChat/{id}', [AIController::class, 'removeChatHistory']);
 Route::post('/ChatLLM', [AIController::class, 'ChatPrompt']);
 Route::get('/subject',[\App\Http\Controllers\SubjectController::class,'subject']);
+Route::get('/digibord', [\App\Http\Controllers\DigibordController::class,'digibord']);
