@@ -12,6 +12,7 @@
     export let chatHistory = StandardChatStart, chatList = [];
 
     let chatHistoryID, input = "";
+    let sidebarOpen = false;
 
     const generateChat = async () => {
         chatHistory = [...chatHistory, {role: "user", content: input}]
@@ -104,9 +105,9 @@
 
 <div class="overflow-hidden h-screen">
     <div class="flex">
-        <section class="border bg-[#398DA9] w-1/6 flex items-center flex-col h-screen overflow-auto">
+        <section class={`border bg-[#398DA9] w-max md:w-1/6 flex items-center flex-col h-screen overflow-auto transform transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
             <div class="text-center">
-                <p class="text-2xl">Chatgeschiedenis</p>
+                <p class="text-xl md:text-2xl">Chatgeschiedenis</p>
             </div>
 
             {#each chatList as chat}
@@ -144,13 +145,24 @@
 
         </section>
 
-        <div class="flex flex-col justify-between h-screen w-5/6">
+        <div class="flex flex-col justify-between h-screen w-6/6 md:w-5/6">
             <div class="h-1/6">
                 <!--Header-->
                 <header
                     class="header bg-[#40A0C1] text-white h-1/2 w-full flex justify-between items-center">
-                    <div
-                        class="logo relative before:content-[''] before:inline-block before:w-10 before:h-10 before:bg-white before:rounded-full before:ml-2.5"></div>
+
+                    <div class="flex justify-between items-center">
+                        <button
+                            type="button"
+                            class="text-black text-4xl md:hidden mb-1"
+                            style="width: 3.5rem; height: 3.5rem;"
+                            on:click={() => sidebarOpen = !sidebarOpen}
+                        >
+                            ☰
+                        </button>
+                        <div
+                            class="logo relative before:content-[''] before:inline-block before:w-10 before:h-10 before:bg-white before:rounded-full before:ml-2.5"></div>
+                    </div>
                     <div
                         class="black-circle relative before:content-[''] before:inline-block before:w-10 before:h-10 before:bg-black before:rounded-full before:mr-2.5"></div>
                 </header>
@@ -216,7 +228,7 @@
                         <button
                             type="submit"
                             class="bg-white text-2xl rounded-full p-2 ml-4"
-                            style="width: 3.5rem; height: 3.5rem;"
+                            style="width: 4.5rem; height: 3.5rem;"
                         >
                             ➤
                         </button>
