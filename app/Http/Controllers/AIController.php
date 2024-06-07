@@ -149,4 +149,10 @@ class AIController extends Controller
 
     }
 
+    //create a new bordChatEntry entry
+    public function AssignQuestionToBoard(Request $request)
+    {
+
+    }
+
 }
