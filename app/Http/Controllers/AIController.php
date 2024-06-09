@@ -213,6 +213,7 @@ class AIController extends Controller
     public function getCSRF(Request $request)
     {
         return csrf_token();
+    }
     //create a new bordChatEntry entry
     public function AssignQuestionToBoard(Request $request)
     {
