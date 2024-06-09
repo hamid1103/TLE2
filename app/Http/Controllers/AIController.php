@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Carbon\Traits\Date;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 use OpenAI\Laravel\Facades\OpenAI;
@@ -114,7 +115,7 @@ class AIController extends Controller
         } else {
             //Generate title from first prompt
 
-            $NCH = ChatHistory::create(['ChatTitle' => $request->chat]);
+            $NCH = ChatHistory::create(['ChatTitle' => $request->chat, 'user_id'=>Auth::id()]);
             $CH = $NCH->id;
             //Save Chat Entry with this ChatHistoryID
             ChatEntry::create(['Sender' => 'user', 'Content' => $request->chat, 'chat_history_id' => $CH]);

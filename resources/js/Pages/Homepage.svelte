@@ -38,6 +38,17 @@
             })
     }
 
+    const logout = async () => {
+        try {
+            // Verstuur een POST-verzoek naar de logout route
+            await axios.post('/logout');
+            // Na succesvolle logout, redirect naar de login pagina
+            window.location.href = '/login';
+        } catch (error) {
+            console.error('Error during logout:', error);
+        }
+    }
+
     let files;
 
     $: if (files) {
@@ -160,9 +171,13 @@
                     class="header bg-[#40A0C1] text-white h-1/2 w-full flex justify-between items-center">
                     <div
                         class="logo relative before:content-[''] before:inline-block before:w-10 before:h-10 before:bg-white before:rounded-full before:ml-2.5"></div>
-                    <div
-                        class="black-circle relative before:content-[''] before:inline-block before:w-10 before:h-10 before:bg-black before:rounded-full before:mr-2.5"></div>
-                </header>
+                    <button
+                        class="black-circle relative before:content-[''] before:inline-block before:w-10 before:h-10 before:bg-black before:rounded-full before:mr-2.5"
+                        on:click={logout}
+                    title="Klik om uit te loggen"
+                    aria-label="Uitloggen">
+                    </button>
+            </header>
             </div>
 
             <!--Chat-->
