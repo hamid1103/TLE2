@@ -18,7 +18,6 @@
 
     const generateChat = async () => {
         chatHistory = [...chatHistory, {role: "user", content: input}]
-        input = ""
 
         //verstuur request
         axios.post("/ChatLLM", {
@@ -35,6 +34,7 @@
                 }
                 chatHistory = [...chatHistory, {role: 'assistant', content: res.data.response}]
                 console.log(res)
+                input = ""
             })
     }
 
