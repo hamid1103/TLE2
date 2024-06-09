@@ -17,6 +17,7 @@ Route::post('/GenContextFromFile/{id}', [AIController::class,'GenerateContextFro
 Route::get('/getCSRF', [AIController::class,'getCSRF']);
 
 Route::get('/subject',[\App\Http\Controllers\SubjectController::class,'subject']);
+
 //Route::get('/register',[\App\Http\Controllers\RegisterController::class,'register']);
 //Route::get('/login',[\App\Http\Controllers\LoginController::class,'login']);
 
@@ -25,3 +26,8 @@ Route::post('/register', [RegisterController::class, 'register']);
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+Route::get('/joinGroup/{id}', [\App\Http\Controllers\DigibordController::class, 'AssignBoard']);
+Route::get('/digibord', [\App\Http\Controllers\DigibordController::class,'digibordList']);
+Route::get('/digibord/{id}', [\App\Http\Controllers\DigibordController::class,'digibord']);
+
