@@ -136,6 +136,36 @@
             "time": "2024-02-09T16:56:22+00:00"
         },
         {
+
+            "name": "convertapi/convertapi-php",
+            "version": "v2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ConvertAPI/convertapi-php.git",
+                "reference": "a4c67b10a4e300536170ea729248a92de70efd36"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ConvertAPI/convertapi-php/zipball/a4c67b10a4e300536170ea729248a92de70efd36",
+                "reference": "a4c67b10a4e300536170ea729248a92de70efd36",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "php": ">=8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~10.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "ConvertApi\\": "lib/"
+                }
+            }
+        },
+        {
             "name": "clue/redis-protocol",
             "version": "v0.3.1",
             "source": {
