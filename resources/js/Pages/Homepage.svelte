@@ -68,18 +68,18 @@
         align-items: flex-start;
         width: auto;
         padding: 10px;
-        background-color: #3b82f6;
-        color: white;
+        background-color: #e5e5e5;
+        color: black;
         border-radius: 10px;
     }
 
     .speech-bubble-ai:after {
         content: '';
-        position: absolute;
+        /*position: absolute;*/
         width: 0;
         height: 0;
         border: 11px solid transparent;
-        border-left-color: #3b82f6;
+        background-color: #e5e5e5;
         border-right: 0;
         border-top: 0;
         margin-top: -5.5px;
@@ -93,21 +93,21 @@
         align-items: flex-start;
         width: auto;
         padding: 10px;
-        background-color: #3b82f6;
-        color: white;
+        background-color: #a2e4ff;
+        color: black;
         border-radius: 10px;
         position: relative;
     }
 
     .speech-bubble-user:after {
         content: '';
-        position: absolute;
+        /*position: absolute;*/
         right: 0;
         top: 50%;
         width: 0;
         height: 0;
         border: 11px solid transparent;
-        border-left-color: #3b82f6;
+        background-color: #a2e4ff;
         border-right: 0;
         border-top: 0;
         margin-top: -5.5px;
@@ -164,11 +164,11 @@
 
         </section>
 
-        <div class="flex flex-col justify-between h-screen w-5/6">
-            <div class="h-1/6">
+        <div class="flex flex-col justify-between h-screen w-5/6 bg-[#F4FFFE] overflow-auto">
+            <div class="">
                 <!--Header-->
                 <header
-                    class="header bg-[#40A0C1] text-white h-1/2 w-full flex justify-between items-center">
+                    class="header bg-[#40A0C1] text-white w-full flex justify-between items-center">
                     <div
                         class="logo relative before:content-[''] before:inline-block before:w-10 before:h-10 before:bg-white before:rounded-full before:ml-2.5"></div>
                     <button
@@ -177,17 +177,17 @@
                     title="Klik om uit te loggen"
                     aria-label="Uitloggen">
                     </button>
-            </header>
+                </header>
             </div>
 
             <!--Chat-->
             <section
-                class="flex flex-col overflow-y-scroll items-center align-middle h-1/12 justify-center font-sans bg-[#F4FFFE] font-sans text-lg">
+                class="flex flex-col overflow-auto items-center align-middle h-full font-sans font-sans text-lg">
 
                 {#each chatHistory as chat}
                     {#if chat.role === "user"}
-                        <div class="mb-2 w-2/3 flex justify-end">
-                            <div class="w-2/3">
+                        <div class="mb-2 w-11/12 flex justify-end">
+                            <div class="w-2/3 flex justify-end">
                                 <div class="speech-bubble-user ">
                                     {chat.content}
                                 </div>
@@ -196,8 +196,8 @@
                         </div>
 
                     {:else if chat.role === "assistant"}
-                        <div class="mb-2 w-2/3 flex justify-start">
-                            <div class="w-2/3">
+                        <div class="mb-2 w-11/12 flex justify-start">
+                            <div class="w-2/3 flex justify-start">
                                 <div class="speech-bubble-ai">
                                     {chat.content}
                                 </div>
