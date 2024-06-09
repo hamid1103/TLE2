@@ -18,7 +18,7 @@ class HomeController extends Controller
         }
 
         // Haal de chatgeschiedenis op als de gebruiker is ingelogd
-        $chats = ChatHistory::with('ChatEntries')->get();
+        $chats = ChatHistory::where(['user_id'=>Auth::user()->id])->with('ChatEntries')->get();
 
         // Render de homepage met de chatlijst
         return Inertia::render('Homepage', ['chatList' => $chats]);
