@@ -50,6 +50,7 @@
                 {
                     chatHistoryID = res.chatID;
                 }
+                modal = false;
             })
     }
 </script>

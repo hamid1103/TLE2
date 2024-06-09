@@ -203,7 +203,7 @@ class AIController extends Controller
         $textResult = $request->text;
 
         //Save system message to db
-        ChatEntry::create(['Content' => 'text file submitted by user: '.$textResult, 'Sender' => 'system', 'chat_history_id' => $id]);
+        ChatEntry::create(['Content' => 'text file submitted by user: '.$textResult."\n Make sure to not directly answer the user's questions but give feedback and writing tips on how to better formulate their questions.", 'Sender' => 'system', 'chat_history_id' => $id]);
 
         //return new System Message and or request status.
         return json_encode(array('chatID' => $id, 'role' => 'system', 'response' => 'text file submitted by user: '.$textResult. "\n Make sure to not directly answer the user's questions but give feedback and writing tips on how to better formulate their questions."));
