@@ -13,15 +13,34 @@ use Inertia\Inertia;
 
 class DigibordController extends Controller
 {
+    function generateRandomString($length = 10)
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[random_int(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
     public function digibordList()
     {
+        if (!Auth::check()) {
+            return redirect('/login');
+        }
         $boards = BordUser::where(['user_id' => Auth::id()])->with('bords')->get();
-        return Inertia::render('DigibordList', ['boards'=>$boards]);
+        return Inertia::render('DigibordList', ['boards' => $boards]);
     }
+
     public function digibord($id)
     {
+        if (!Auth::check()) {
+            return redirect('/login');
+        }
         $Questions = BordChatentry::where(['bord_id' => $id])->get();
-        return Inertia::render('Digibord', ['board'=>Bord::find($id), 'questions'=>$Questions]);
+        $boardRequest = BoardAssignmentLink::where(['board_id' => $id])->first();
+        return Inertia::render('Digibord', ['board' => Bord::find($id), 'questions' => $Questions, 'boardRequest' => $boardRequest]);
     }
 
     public function fetchQuestionsByBoardID($id)
@@ -32,8 +51,17 @@ class DigibordController extends Controller
     public function createBoard(Request $request): RedirectResponse
     {
         $newB = Bord::create(['Title' => $request->title]);
+        BoardAssignmentLink::create(['board_id' => $newB->id, 'rngcode' => $newB->id . '' . generateRandomString()]);
         BordUser::create(['bord_id' => $newB->id, 'user_id' => Auth::id()]);
-        return redirect('/digibord/'.$newB->id);
+        return redirect('/digibord/' . $newB->id);
+    }
+
+    public function JoinBoardWithCode(Request $request): RedirectResponse
+    {
+
+        $BoardAL = BoardAssignmentLink::where(['rngcode' => $request->code])->first();
+        BordUser::create(['bord_id' => $BoardAL->board_id, 'user_id' => Auth::id()]);
+        return redirect('/digibord/'.$BoardAL->board_id);
     }
 
     //Removes the BordChatEntry Entry, so it won't show up on the board anymore
@@ -42,12 +70,11 @@ class DigibordController extends Controller
 
     }
 
-    //ID refers to the boardAssignmentLink Model Entry ID
+    //ID refers to the boardAssignmentLink Model Entry ID using link
     //Assign user to board
     public function AssignBoard(Request $request, $id): RedirectResponse
     {
-        if(!Auth())
-        {
+        if (!Auth()) {
             return redirect('/login');
         }
         $BAL = BoardAssignmentLink::find($id);
