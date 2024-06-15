@@ -24,7 +24,7 @@
                         NameEmpty = true
                         return
                     }else{
-                    //$NMP.post('/digibord')
+                    $NMP.post('/digibord')
                     }
                }}>Maak nieuw bord</button>
         </div>
