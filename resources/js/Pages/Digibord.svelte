@@ -18,7 +18,7 @@
     <div class="flex flex-wrap justify-center">
         {#each questions as question}
             <div class="w-40 h-10 bg-[#C4F0FF] rounded-md flex justify-center items-center m-2">
-                {question.text}
+                {question.Content}
             </div>
         {/each}
     </div>

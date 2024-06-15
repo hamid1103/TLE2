@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ChatHistory;
+use App\Models\User;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -19,8 +20,9 @@ class HomeController extends Controller
 
         // Haal de chatgeschiedenis op als de gebruiker is ingelogd
         $chats = ChatHistory::where(['user_id'=>Auth::user()->id])->with('ChatEntries')->get();
+        $boards = Auth::user()->boards()->get();
 
         // Render de homepage met de chatlijst
-        return Inertia::render('Homepage', ['chatList' => $chats]);
+        return Inertia::render('Homepage', ['chatList' => $chats, 'boards'=>$boards]);
     }
 }

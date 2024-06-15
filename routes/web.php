@@ -32,4 +32,4 @@ Route::get('/digibord', [\App\Http\Controllers\DigibordController::class,'digibo
 Route::get('/digibord/{id}', [\App\Http\Controllers\DigibordController::class,'digibord']);
 Route::post('/digibord', [\App\Http\Controllers\DigibordController::class, 'createBoard']);
 Route::post('/joinCode', [\App\Http\Controllers\DigibordController::class, 'JoinBoardWithCode']);
-Route::post('/addQuestionToBoard', [\App\Http\Controllers\DigibordController::class, '']);
+Route::post('/addQuestionToBoard', [\App\Http\Controllers\DigibordController::class, 'ChatEntryToBoard']);

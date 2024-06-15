@@ -11,7 +11,8 @@
     [Example 1] user: "I am unable to understand the reason this teacher gave me a failing grade on this assignment." assistant: "You should formulate a question where you ask about your grade and what went wrong. 1. make sure to be respectfull. 2. make sure to mentiont what you think you did correctly and ask about why that wasn't enough."`
     },
         {role: "assistant", content: "Hoi, ik ben hier om je te helpen met stellen van vragen!"}]
-    export let chatHistory = StandardChatStart, chatList = [];
+    export let chatHistory = StandardChatStart, chatList = [], boards =[];
+    console.log(chatHistory)
 
 
     let chatHistoryID // @hmr:keep
@@ -60,7 +61,7 @@
         }
     }
 
-    let chatEntryID, CEModal = false;
+    let chatEntryID, CEModal = false, CEText="";
 
     function CloseCEModal() {
         CEModal = false
@@ -96,7 +97,6 @@
 
     .speech-bubble-user {
         display: flex;
-        flex-direction: column;
         align-items: flex-start;
         width: auto;
         padding: 10px;
@@ -130,7 +130,7 @@
 {/if}
 
 {#if CEModal}
-    <ChatAssignBoardModal modalClose={CloseCEModal} bind:ChatID={chatEntryID}></ChatAssignBoardModal>
+    <ChatAssignBoardModal modalClose={CloseCEModal} bind:ChatID={chatEntryID} bind:CEPreview={CEText} boards={boards}></ChatAssignBoardModal>
 {/if}
 
 <div class="overflow-hidden h-screen">
@@ -148,7 +148,7 @@
             axios.get('/getHistory/'+chatHistoryID)
             .then((res)=>{
                 console.log(res.data)
-                chatHistory = res.data.map((chat)=>({role:chat.Sender,content:chat.Content}));
+                chatHistory = res.data.map((chat)=>({id:chat.id, role:chat.Sender, content:chat.Content}));
                 chatHistory = [...StandardChatStart, ...chatHistory]
             })
         }
@@ -210,8 +210,12 @@
                     {#if chat.role === "user"}
                         <div class="mb-2 w-2/3 flex justify-end">
                             <div class="w-2/3">
-                                <div class="speech-bubble-user ">
-                                    {chat.content}
+                                <div class="speech-bubble-user flex-row">
+                                    <button class="bg-gray-700 w-5 hover:bg-gray-500 text-white font-bold" on:click={()=>{
+                                        chatEntryID = chat.id
+                                        CEText = chat.content
+                                        CEModal = true
+                                    }}>↑</button><span>{chat.content}</span>
                                 </div>
                             </div>
 

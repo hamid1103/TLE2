@@ -40,7 +40,7 @@ class DigibordController extends Controller
         if (!Auth::check()) {
             return redirect('/login');
         }
-        $Questions = BordChatentry::where(['bord_id' => $id])->get();
+        $Questions = Bord::find($id)->ChatEntries()->get();
         $boardRequest = BoardAssignmentLink::where(['board_id' => $id])->first();
         return Inertia::render('Digibord', ['board' => Bord::find($id), 'questions' => $Questions, 'boardRequest' => $boardRequest]);
     }
@@ -87,11 +87,10 @@ class DigibordController extends Controller
     public function ChatEntryToBoard(Request $request)
     {
         try{
-
-            $ChatEntry = ChatEntry::find($request->chatEntryID)->get();
-
+            BordChatentry::create(['bord_id' => $request->boardID, 'chat_entry_id' => $request->chatEntryID]);
+            return response("done", 200);
         }catch (\Exception $e){
-
+            return response($e, 500);
         }
     }
 
