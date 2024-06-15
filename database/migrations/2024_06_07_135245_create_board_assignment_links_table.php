@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('board__assignment__links', function (Blueprint $table) {
+        Schema::create('board_assignment_links', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('board_id');
             $table->foreign('board_id')->references('id')->on('bords');

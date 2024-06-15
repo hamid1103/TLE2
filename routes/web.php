@@ -30,4 +30,6 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/joinGroup/{id}', [\App\Http\Controllers\DigibordController::class, 'AssignBoard']);
 Route::get('/digibord', [\App\Http\Controllers\DigibordController::class,'digibordList']);
 Route::get('/digibord/{id}', [\App\Http\Controllers\DigibordController::class,'digibord']);
-
+Route::post('/digibord', [\App\Http\Controllers\DigibordController::class, 'createBoard']);
+Route::post('/joinCode', [\App\Http\Controllers\DigibordController::class, 'JoinBoardWithCode']);
+Route::post('/addQuestionToBoard', [\App\Http\Controllers\DigibordController::class, '']);

@@ -6,6 +6,8 @@ use App\Models\BoardAssignmentLink;
 use App\Models\Bord;
 use App\Models\BordChatentry;
 use App\Models\BordUser;
+use App\Models\ChatEntry;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,7 +31,7 @@ class DigibordController extends Controller
         if (!Auth::check()) {
             return redirect('/login');
         }
-        $boards = BordUser::where(['user_id' => Auth::id()])->with('bords')->get();
+        $boards = User::find(Auth::id())->boards()->get();
         return Inertia::render('DigibordList', ['boards' => $boards]);
     }
 
@@ -51,7 +53,7 @@ class DigibordController extends Controller
     public function createBoard(Request $request): RedirectResponse
     {
         $newB = Bord::create(['Title' => $request->title]);
-        BoardAssignmentLink::create(['board_id' => $newB->id, 'rngcode' => $newB->id . '' . generateRandomString()]);
+        BoardAssignmentLink::create(['board_id' => $newB->id, 'rngcode' => $newB->id . '' . $this->generateRandomString()]);
         BordUser::create(['bord_id' => $newB->id, 'user_id' => Auth::id()]);
         return redirect('/digibord/' . $newB->id);
     }
@@ -80,6 +82,17 @@ class DigibordController extends Controller
         $BAL = BoardAssignmentLink::find($id);
         BordUser::create(['bord_id' => $BAL->board_id, 'user_id' => Auth::id()]);
         return redirect(`/digibord/${$BAL->board_id}`);
+    }
+
+    public function ChatEntryToBoard(Request $request)
+    {
+        try{
+
+            $ChatEntry = ChatEntry::find($request->chatEntryID)->get();
+
+        }catch (\Exception $e){
+
+        }
     }
 
 }

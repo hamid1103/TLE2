@@ -1,16 +1,8 @@
 <script>
-    let questions = [];
-
-    async function fetchQuestions() {
-        const response = await fetch('');
-        if (response.ok) {
-            questions = await response.json();
-        } else {
-            alert('Er is iets fout gegaan bij het ophalen van de vragen.');
-        }
-    }
-
-    fetchQuestions();
+    export let board, questions, boardRequest;
+    console.log(board)
+    console.log(questions)
+    console.log(boardRequest)
 </script>
 
 <div class="h-screen bg-[#E0F7FA]">
@@ -19,8 +11,8 @@
     </header>
 
     <div class="text-center pt-10">
-        <h1 class="text-4xl mb-5">Stel je vragen op je telefoon</h1>
-        <h2 class="text-2xl mb-10">Code: ABCD</h2>
+        <h1 class="text-4xl mb-5">Breng Vragen vanuit de chat naar dit bord</h1>
+        <h2 class="text-2xl mb-10">Code: {boardRequest.rngcode}</h2>
     </div>
 
     <div class="flex flex-wrap justify-center">
