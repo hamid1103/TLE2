@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BordUser extends Model
 {
+    protected $table = "bord_user";
     protected $fillable = [
         'user_id',
         'bord_id',

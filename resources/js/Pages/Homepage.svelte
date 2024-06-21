@@ -1,7 +1,8 @@
 <script>
-    import {page, useForm} from "@inertiajs/svelte";
+    import {Link, page, useForm} from "@inertiajs/svelte";
     import axios from "axios";
     import FileUploadModal from "@/Components/FileUploadModal.svelte";
+    import ChatAssignBoardModal from "@/Components/ChatAssignBoardModal.svelte";
 
     let StandardChatStart = [{
         role: "system", content: `You are an AI that helps students with formulating questions in a classroom environment. When the user asks you
@@ -10,7 +11,8 @@
     [Example 1] user: "I am unable to understand the reason this teacher gave me a failing grade on this assignment." assistant: "You should formulate a question where you ask about your grade and what went wrong. 1. make sure to be respectfull. 2. make sure to mentiont what you think you did correctly and ask about why that wasn't enough."`
     },
         {role: "assistant", content: "Hoi, ik ben hier om je te helpen met stellen van vragen!"}]
-    export let chatHistory = StandardChatStart, chatList = [];
+    export let chatHistory = StandardChatStart, chatList = [], boards =[];
+    console.log(chatHistory)
 
 
     let chatHistoryID // @hmr:keep
@@ -59,6 +61,12 @@
         }
     }
 
+    let chatEntryID, CEModal = false, CEText="";
+
+    function CloseCEModal() {
+        CEModal = false
+    }
+
 </script>
 
 <style>
@@ -89,7 +97,6 @@
 
     .speech-bubble-user {
         display: flex;
-        flex-direction: column;
         align-items: flex-start;
         width: auto;
         padding: 10px;
@@ -117,51 +124,66 @@
 </style>
 
 {#if fileModal}
-    <FileUploadModal bind:modal={fileModal} bind:chatHistory={chatHistory} bind:chatHistoryID={chatHistoryID} bind:files={files}>
+    <FileUploadModal bind:modal={fileModal} bind:chatHistory={chatHistory} bind:chatHistoryID={chatHistoryID}
+                     bind:files={files}>
     </FileUploadModal>
+{/if}
+
+{#if CEModal}
+    <ChatAssignBoardModal modalClose={CloseCEModal} bind:ChatID={chatEntryID} bind:CEPreview={CEText} boards={boards}></ChatAssignBoardModal>
 {/if}
 
 <div class="overflow-hidden h-screen">
     <div class="flex">
-        <section class="border bg-[#398DA9] w-1/6 flex items-center flex-col h-screen overflow-auto">
-            <div class="text-center">
-                <p class="text-2xl">Chatgeschiedenis</p>
-            </div>
+        <section class="border bg-[#398DA9] w-1/6 flex justify-between items-center flex-col h-screen overflow-auto">
+            <div class="flex-col flex items-center mb-5">
+                <div class="text-center">
+                    <p class="text-2xl">Chatgeschiedenis</p>
+                </div>
 
-            {#each chatList as chat}
-                <div class="bg-[#F4FFFE] flex m-4 text-xl rounded-md">
-                    <button on:click={()=>{
+                {#each chatList as chat}
+                    <div class="bg-[#F4FFFE] flex m-4 text-xl rounded-md">
+                        <button on:click={()=>{
             chatHistoryID = chat.id
             axios.get('/getHistory/'+chatHistoryID)
             .then((res)=>{
                 console.log(res.data)
-                chatHistory = res.data.map((chat)=>({role:chat.Sender,content:chat.Content}));
+                chatHistory = res.data.map((chat)=>({id:chat.id, role:chat.Sender, content:chat.Content}));
                 chatHistory = [...StandardChatStart, ...chatHistory]
             })
         }
         }>
-                        {chat.ChatTitle}
-                    </button>
+                            {chat.ChatTitle}
+                        </button>
 
-                    <button class="bg-red-500" on:click={()=>{
+                        <button class="bg-red-500" on:click={()=>{
                         axios.delete(`/delChat/${chat.id}`)
                         .then((res)=>{
                             console.log(res)
                             chatList = res.data
                         })
                     }}>
-                        X
-                    </button>
+                            X
+                        </button>
 
-                </div>
+                    </div>
 
-            {/each}
-            <button class="bg-gold w-24 text-xl rounded-md" on:click={()=>{
+                {/each}
+                <button class="bg-gold w-24 text-xl rounded-md" on:click={()=>{
                 chatHistoryID = undefined
                 chatHistory = StandardChatStart
             }}>+
-            </button>
-
+                </button>
+            </div>
+            <div class="w-full">
+                <div class="w-full border mb-5"></div>
+                <div class="w-full mb-3">
+                    <Link href="/digibord" class="w-full flex justify-center">
+                        <button class="bg-[#F4FFFE] hover:bg-blue-400 rounded-md p-1 w-11/12">Bekijk vraagborden
+                        </button>
+                    </Link>
+                </div>
+            </div>
         </section>
 
         <div class="flex flex-col justify-between h-screen w-5/6 bg-[#F4FFFE] overflow-auto">
@@ -174,8 +196,8 @@
                     <button
                         class="black-circle relative before:content-[''] before:inline-block before:w-10 before:h-10 before:bg-black before:rounded-full before:mr-2.5"
                         on:click={logout}
-                    title="Klik om uit te loggen"
-                    aria-label="Uitloggen">
+                        title="Klik om uit te loggen"
+                        aria-label="Uitloggen">
                     </button>
                 </header>
             </div>
@@ -186,10 +208,14 @@
 
                 {#each chatHistory as chat}
                     {#if chat.role === "user"}
-                        <div class="mb-2 w-11/12 flex justify-end">
-                            <div class="w-2/3 flex justify-end">
-                                <div class="speech-bubble-user ">
-                                    {chat.content}
+                        <div class="mb-2 w-2/3 flex justify-end">
+                            <div class="w-2/3">
+                                <div class="speech-bubble-user flex-row">
+                                    <button class="bg-gray-700 w-5 hover:bg-gray-500 text-white font-bold" on:click={()=>{
+                                        chatEntryID = chat.id
+                                        CEText = chat.content
+                                        CEModal = true
+                                    }}>↑</button><span>{chat.content}</span>
                                 </div>
                             </div>
 

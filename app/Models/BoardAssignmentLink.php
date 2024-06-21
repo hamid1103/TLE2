@@ -8,5 +8,6 @@ class BoardAssignmentLink extends Model
 {
     protected $fillable = [
         'board_id',
+        'rngcode'
     ];
 }

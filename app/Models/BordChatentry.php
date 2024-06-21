@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class BordChatentry extends Model
+class BordChatentry extends Pivot
 {
+    protected $table = "bord_chatentries";
     protected $fillable = [
         'chat_entry_id',
         'bord_id',
