@@ -107,18 +107,19 @@ class AIController extends Controller
 
         $chatHistory = [];
         //Check if $request has a chatHistory ID with it
+        $nce = 0;
         if (isset($request->chatHistoryID)) {
             //Yes
             //Save chat entries with ChatHistory ID
             $CH = $request->chatHistoryID;
-            ChatEntry::create(['Sender' => 'user', 'Content' => $request->chat, 'chat_history_id' => $CH]);
+            $nce = ChatEntry::create(['Sender' => 'user', 'Content' => $request->chat, 'chat_history_id' => $CH]);
         } else {
             //Generate title from first prompt
 
             $NCH = ChatHistory::create(['ChatTitle' => $request->chat, 'user_id'=>Auth::id()]);
             $CH = $NCH->id;
             //Save Chat Entry with this ChatHistoryID
-            ChatEntry::create(['Sender' => 'user', 'Content' => $request->chat, 'chat_history_id' => $CH]);
+            $nce = ChatEntry::create(['Sender' => 'user', 'Content' => $request->chat, 'chat_history_id' => $CH]);
         }
 
         //Get whole chat history from client for simplicity
@@ -131,7 +132,7 @@ class AIController extends Controller
         $responseText = $result['choices'][0]['message']['content'];
 
         //Save response to CH in db
-        $nce = ChatEntry::create(['Sender' => 'assistant', 'Content' => strval($responseText), 'chat_history_id' => $CH]);
+        ChatEntry::create(['Sender' => 'assistant', 'Content' => strval($responseText), 'chat_history_id' => $CH]);
 
         //Return Response
         $response = json_encode(array('chatID' => $CH, 'response' => $responseText, 'nceID'=>$nce->id));
