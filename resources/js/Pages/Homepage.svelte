@@ -34,7 +34,7 @@
                     }
                     chatHistoryID = res.data.chatID
                 }
-                chatHistory = [...chatHistory, {role: 'assistant', content: res.data.response}]
+                chatHistory = [...chatHistory, {id: res.data.nceID, role: 'assistant', content: res.data.response}]
                 console.log(res)
                 input = ""
             })
