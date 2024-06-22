@@ -19,9 +19,9 @@
         <button class="bg-red-500 w-24" on:click={()=>{modalClose(); console.log("Modal should be closed rn")}}>X
         </button>
     </div>
-    <div class="w-3/5 h-2/6 bg-blue-600 opacity-100 flex justify-between">
+    <div class="w-3/5 h-1/6 bg-blue-600 opacity-100 flex justify-center overflow-y-auto items-center">
         {#each boards as board}
-            <button class="rounded bg-white w-24" on:click={()=>{
+            <button class="rounded bg-white w-24 h-24 mr-4" on:click={()=>{
                 BoardID = board.id
                 AssignToBoard()
             }}>
