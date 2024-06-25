@@ -20,19 +20,18 @@
 
     const generateChat = async () => {
         chatHistory = [...chatHistory, {role: "user", content: input}]
-
+        console.log(`${chatHistoryID}`)
         //verstuur request
         axios.post("/ChatLLM", {
             chat: input,
-            chatHistoryID: chatHistoryID || undefined,
+            chatHistoryID: chatHistoryID,
             history: chatHistory,
         })
             .then((res) => {
-                if (res.chatID) {
+                if (res.data.chatID) {
                     if (chatHistoryID === undefined) {
-
+                        chatHistoryID = res.data.chatID
                     }
-                    chatHistoryID = res.data.chatID
                 }
                 chatHistory = [...chatHistory, {role: 'assistant', content: res.data.response}]
                 console.log(res)

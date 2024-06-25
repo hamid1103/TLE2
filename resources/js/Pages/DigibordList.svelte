@@ -27,7 +27,7 @@
     </header>
 
     <div class="text-center pt-2">
-        <h1 class="text-4xl mb-5">Board</h1>
+        <h1 class="text-4xl mb-5 text-white">Board</h1>
     </div>
     <div class="w-screen flex flex-wrap">
         {#each boards as board}
