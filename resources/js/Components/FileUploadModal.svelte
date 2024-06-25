@@ -56,9 +56,9 @@
 </script>
 
 <div class="fixed h-screen w-screen bg-gray-700 bg-opacity-75 flex justify-center align-middle items-center z-50" on:click|self={()=>{modal = false}}>
-    <div class="w-3/5 h-3/5 bg-blue-600 opacity-100 flex flex-col align-middle items-center">
-        <span class="font-sans text-black text-xl">Upload a file for the ai to work with. We do not keep your uploaded files but we do save the generated context for you.</span>
+    <div class="absolute w-11/12 md:w-2/5 p-4 bg-white opacity-100 flex flex-col align-middle items-center">
+        <span class="mb-4 font-sans text-black text-xl text-center">Upload a file for the AI to work with. We do not keep your uploaded files but we do save the generated context for you.</span>
         <input type="file" accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" bind:files={files} max="1">
-        <button class="bg-red-500 rounded font-bold text-xl p-3" on:click={GenContext}>Upload</button>
+        <button class="mt-6 bg-blue-300 rounded font-bold text-xl p-3" on:click={GenContext}>Upload</button>
     </div>
 </div>
