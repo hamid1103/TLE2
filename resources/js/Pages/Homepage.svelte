@@ -105,7 +105,11 @@
 
 <div class="overflow-hidden h-screen">
     <div class="flex">
-        <section class={`border bg-[#398DA9] w-max md:w-1/6 flex items-center flex-col h-screen overflow-auto transform transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+        <section class={`border bg-[#398DA9] w-max w-5/12 md:w-1/6 flex items-center flex-col h-screen overflow-auto transform transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} ${'absolute md:relative'}`}>
+            <button type="button" class="text-black text-4xl md:hidden mr-auto mt-2" style="width: 3.5rem; height: 3.5rem;"
+                    on:click={() => sidebarOpen = false}>
+                ☰
+            </button>
             <div class="text-center">
                 <p class="text-xl md:text-2xl">Chatgeschiedenis</p>
             </div>
@@ -160,8 +164,6 @@
                         >
                             ☰
                         </button>
-                        <div
-                            class="logo relative before:content-[''] before:inline-block before:w-10 before:h-10 before:bg-white before:rounded-full before:ml-2.5"></div>
                     </div>
                     <div
                         class="black-circle relative before:content-[''] before:inline-block before:w-10 before:h-10 before:bg-black before:rounded-full before:mr-2.5"></div>
