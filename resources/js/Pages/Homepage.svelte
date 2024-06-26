@@ -17,6 +17,7 @@
 
     let chatHistoryID // @hmr:keep
     let fileModal = false, input = "";
+    let sidebarOpen = false;
 
     const generateChat = async () => {
         let oldHistory = chatHistory
@@ -111,7 +112,7 @@
         background-color: #a2e4ff;
         color: black;
         border-radius: 10px;
-        position: relative;
+        /*position: relative;*/
     }
 
     .speech-bubble-user:after {
@@ -129,6 +130,18 @@
         margin-right: -11px;
     }
 
+    .custom-circle::before {
+        content: '';
+        display: inline-block;
+        width: 2.5rem; /* 10 * 0.25rem */
+        height: 2.5rem;
+        background-image: url('../../img/login.png');
+        background-size: cover;
+        background-position: center;
+        border-radius: 50%;
+        margin-right: 0.625rem; /* 2.5 * 0.25rem */
+        background-color: white; /* Fallback in case the image doesn't load */
+    }
 </style>
 
 {#if fileModal}
@@ -143,7 +156,11 @@
 
 <div class="overflow-hidden h-screen">
     <div class="flex">
-        <section class="border bg-[#398DA9] w-1/6 flex justify-between items-center flex-col h-screen overflow-auto">
+        <section class={`border bg-[#398DA9] w-max w-4/6 md:w-1/6 flex items-center flex-col h-screen overflow-auto transform transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} ${'absolute md:relative'}`}>
+            <button type="button" class="text-black text-4xl md:hidden mr-auto mt-2" style="width: 3.5rem; height: 3.5rem;"
+                    on:click={() => sidebarOpen = false}>
+                ☰
+            </button>
             <div class="flex-col flex items-center mb-5">
                 <div class="text-center">
                     <p class="text-2xl">Chatgeschiedenis</p>
@@ -194,15 +211,21 @@
             </div>
         </section>
 
-        <div class="flex flex-col justify-between h-screen w-5/6 bg-[#F4FFFE] overflow-auto">
+        <div class="flex flex-col justify-between h-screen w-screen bg-[#F4FFFE] overflow-auto">
             <div class="">
                 <!--Header-->
                 <header
-                    class="header bg-[#40A0C1] text-white w-full flex justify-between items-center">
-                    <div
-                        class="logo relative before:content-[''] before:inline-block before:w-10 before:h-10 before:bg-white before:rounded-full before:ml-2.5"></div>
+                    class="header bg-[#40A0C1] text-white w-full flex justify-between md:justify-end items-center">
                     <button
-                        class="black-circle relative before:content-[''] before:inline-block before:w-10 before:h-10 before:bg-black before:rounded-full before:mr-2.5"
+                        type="button"
+                        class="text-black text-4xl md:hidden mb-1"
+                        style="width: 3.5rem; height: 3.5rem;"
+                        on:click={() => sidebarOpen = !sidebarOpen}
+                    >
+                        ☰
+                    </button>
+                    <button
+                        class="black-circle relative custom-circle"
                         on:click={logout}
                         title="Klik om uit te loggen"
                         aria-label="Uitloggen">
@@ -216,8 +239,8 @@
 
                 {#each chatHistory as chat}
                     {#if chat.role === "user"}
-                        <div class="mb-2 w-2/3 flex justify-end">
-                            <div class="w-2/3">
+                        <div class="mb-2 w-11/12 flex justify-end">
+                            <div class="w-2/3 flex justify-end">
                                 <div class="speech-bubble-user flex-row">
                                     <button class="bg-gray-700 w-5 hover:bg-gray-500 text-white font-bold" on:click={()=>{
                                         chatEntryID = chat.id
