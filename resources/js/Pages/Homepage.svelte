@@ -15,7 +15,7 @@
     console.log(chatHistory)
 
 
-    let chatHistoryID // @hmr:keep
+    let chatHistoryID, input = "";
     let fileModal = false, input = "";
     let sidebarOpen = false;
 
@@ -156,16 +156,14 @@
 
 <div class="overflow-hidden h-screen">
     <div class="flex">
-        <section class={`border bg-[#398DA9] w-max w-4/6 md:w-1/6 flex items-center flex-col h-screen overflow-auto transform transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} ${'absolute md:relative'}`}>
+        <section class={`border bg-[#398DA9] w-max w-5/12 md:w-1/6 flex items-center flex-col h-screen overflow-auto transform transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} ${'absolute md:relative'}`}>
             <button type="button" class="text-black text-4xl md:hidden mr-auto mt-2" style="width: 3.5rem; height: 3.5rem;"
                     on:click={() => sidebarOpen = false}>
                 ☰
             </button>
-            <div class="flex-col flex items-center mb-5">
-                <div class="text-center">
-                    <p class="text-2xl">Chatgeschiedenis</p>
-                </div>
-
+            <div class="text-center">
+                <p class="text-xl md:text-2xl">Chatgeschiedenis</p>
+            </div>
                 {#each chatList as chat}
                     <div class="bg-[#F4FFFE] flex m-4 text-xl rounded-md">
                         <button on:click={()=>{
@@ -211,25 +209,25 @@
             </div>
         </section>
 
-        <div class="flex flex-col justify-between h-screen w-screen bg-[#F4FFFE] overflow-auto">
-            <div class="">
+
+        <div class="flex flex-col justify-between h-screen w-6/6 md:w-5/6">
+            <div class="h-1/6">
                 <!--Header-->
                 <header
-                    class="header bg-[#40A0C1] text-white w-full flex justify-between md:justify-end items-center">
-                    <button
-                        type="button"
-                        class="text-black text-4xl md:hidden mb-1"
-                        style="width: 3.5rem; height: 3.5rem;"
-                        on:click={() => sidebarOpen = !sidebarOpen}
-                    >
-                        ☰
-                    </button>
-                    <button
-                        class="black-circle relative custom-circle"
-                        on:click={logout}
-                        title="Klik om uit te loggen"
-                        aria-label="Uitloggen">
-                    </button>
+                    class="header bg-[#40A0C1] text-white h-1/2 w-full flex justify-between items-center">
+
+                    <div class="flex justify-between items-center">
+                        <button
+                            type="button"
+                            class="text-black text-4xl md:hidden mb-1"
+                            style="width: 3.5rem; height: 3.5rem;"
+                            on:click={() => sidebarOpen = !sidebarOpen}
+                        >
+                            ☰
+                        </button>
+                    </div>
+                    <div
+                        class="black-circle relative before:content-[''] before:inline-block before:w-10 before:h-10 before:bg-black before:rounded-full before:mr-2.5"></div>
                 </header>
             </div>
 
@@ -297,7 +295,7 @@
                         <button
                             type="submit"
                             class="bg-white text-2xl rounded-full p-2 ml-4"
-                            style="width: 3.5rem; height: 3.5rem;"
+                            style="width: 4.5rem; height: 3.5rem;"
                         >
                             ➤
                         </button>

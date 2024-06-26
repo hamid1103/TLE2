@@ -58,9 +58,10 @@
     </header>
 
     <h1 class="text-center text-5xl pb-5 pt-4">Vakken</h1>
+    <div>
     <div class="flex flex-wrap justify-center">
         {#each subjects as subject}
-            <a href="/" class="w-40 h-40 bg-[#C4F0FF] rounded-square flex justify-center items-center m-2 mr-20 relative">
+            <a href="/" class=" w-32 h-32 md:w-40 md:h-40 bg-[#C4F0FF] rounded-square flex justify-center items-center m-2 md:mr-20 relative">
                 <div class="flex flex-col w-full h-full justify-between items-center">
                     <div class="flex justify-end w-full p-2">
                         <div class="cursor-pointer" on:click|stopPropagation={(event) => {event.preventDefault(); removeSubject(subject);}}>X</div>
@@ -72,17 +73,18 @@
             </a>
         {/each}
         {#if showInput}
-            <section class="w-40 h-40 bg-white rounded-square flex justify-center items-center m-2">
+            <section class="w-32 h-32 md:w-40 md:h-40 bg-white rounded-square flex justify-center items-center m-2">
                 <div class="flex flex-row justify-center items-center">
                     <input bind:value={newSubject} placeholder="Voer nieuw vak in" class="ml-24 border-black border-2"/>
                     <button on:click={addSubject} class="bg-[#40A0C1] text-white ">Submit</button>
                 </div>
             </section>
         {:else}
-            <section class="w-40 h-40 bg-[#C4F0FF] rounded-square flex justify-center items-center m-2 mr-20"
+            <section class="w-32 h-32 md:w-40 md:h-40 bg-[#C4F0FF] rounded-square flex justify-center items-center m-2 md:mr-20"
                      on:click={() => showInput = true}>
                 <p>Vak toevoegen</p>
             </section>
         {/if}
     </div>
+</div>
 </div>
