@@ -19,13 +19,22 @@
     let fileModal = false, input = "";
 
     const generateChat = async () => {
-        chatHistory = [...chatHistory, {role: "user", content: input}]
-        console.log(`${chatHistoryID}`)
+        let oldHistory = chatHistory
+        let SendHistory = oldHistory.map((ent)=>{
+            console.log(ent)
+            return {
+                role: ent.role,
+                content: ent.content
+            }
+        })
+        SendHistory = [...SendHistory, {role: "user", content: input}]
+        chatHistory = [...chatHistory, {role: "user", content: "Loading... Please wait"}]
+        console.log(SendHistory)
         //verstuur request
         axios.post("/ChatLLM", {
             chat: input,
-            chatHistoryID: chatHistoryID,
-            history: chatHistory,
+            chatHistoryID: chatHistoryID || undefined,
+            history: SendHistory,
         })
             .then((res) => {
                 if (res.data.chatID) {
@@ -33,7 +42,7 @@
                         chatHistoryID = res.data.chatID
                     }
                 }
-                chatHistory = [...chatHistory, {role: 'assistant', content: res.data.response}]
+                chatHistory = [...oldHistory, {id: res.data.nceID, role: "user", content: input}, {role: 'assistant', content: res.data.response}]
                 console.log(res)
                 input = ""
             })
