@@ -37,11 +37,10 @@
             history: SendHistory,
         })
             .then((res) => {
-                if (res.chatID) {
+                if (res.data.chatID) {
                     if (chatHistoryID === undefined) {
-
+                        chatHistoryID = res.data.chatID
                     }
-                    chatHistoryID = res.data.chatID
                 }
                 chatHistory = [...oldHistory, {id: res.data.nceID, role: "user", content: input}, {role: 'assistant', content: res.data.response}]
                 console.log(res)

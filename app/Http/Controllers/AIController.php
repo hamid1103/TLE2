@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BordChatentry;
 use App\Models\ChatEntry;
 use App\Models\ChatHistory;
 use App\Models\embedding;
@@ -143,10 +144,11 @@ class AIController extends Controller
     public function removeChatHistory(Request $request, $id)
     {
         try {
+            BordChatentry::where('chat_entry_id', '=', $id)->delete();
             ChatEntry::where('chat_history_id', '=', $id)->delete();
             ChatHistory::find($id)->delete();
-            $response = ChatHistory::all();
-            return response($response, 200);
+            $chats = ChatHistory::where(['user_id'=>Auth::user()->id])->with('ChatEntries')->get();
+            return response($chats, 200);
         } catch (\Exception $e) {
             return response(json_encode($e), 500);
         }
