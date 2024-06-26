@@ -1,4 +1,6 @@
 <script>
+    import axios from "axios";
+
     let subjects = JSON.parse(localStorage.getItem('subjects')) || ["Wiskunde", "Maatschappijleer", "Engels"];
     let newSubject = "";
     let showInput = false;
@@ -16,12 +18,43 @@
         subjects = subjects.filter(subject => subject !== subjectToRemove);
         localStorage.setItem('subjects', JSON.stringify(subjects));
     }
+
+    const logout = async () => {
+        try {
+            // Verstuur een POST-verzoek naar de logout route
+            await axios.post('/logout');
+            // Na succesvolle logout, redirect naar de login pagina
+            window.location.href = '/login';
+        } catch (error) {
+            console.error('Error during logout:', error);
+        }
+    }
 </script>
+
+<style>
+    .custom-circle::before {
+        content: '';
+        display: inline-block;
+        width: 2.5rem; /* 10 * 0.25rem */
+        height: 2.5rem;
+        background-image: url('../../img/login.png');
+        background-size: cover;
+        background-position: center;
+        border-radius: 50%;
+        margin-right: 0.625rem; /* 2.5 * 0.25rem */
+        background-color: white; /* Fallback in case the image doesn't load */
+    }
+</style>
 
 <!--header-->
 <div class="overflow-hidden h-screen">
     <header class="header bg-[#40A0C1] text-white w-full h-12 flex justify-end items-center">
-        <div class="black-circle relative before:content-[''] before:inline-block before:w-10 before:h-10 before:bg-black before:rounded-full before:mr-2.5"></div>
+        <button
+            class="black-circle relative custom-circle"
+            on:click={logout}
+            title="Klik om uit te loggen"
+            aria-label="Uitloggen">
+        </button>
     </header>
 
     <h1 class="text-center text-5xl pb-5 pt-4">Vakken</h1>

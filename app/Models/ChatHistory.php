@@ -9,6 +9,7 @@ class ChatHistory extends Model
 {
     protected $fillable = [
         'ChatTitle',
+        'user_id'
     ];
 
     public function ChatEntries(): HasMany
