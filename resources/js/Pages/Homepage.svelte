@@ -16,7 +16,7 @@
 
 
     let chatHistoryID, input = "";
-    let fileModal = false, input = "";
+    let fileModal = false;
     let sidebarOpen = false;
 
     const generateChat = async () => {
@@ -164,6 +164,7 @@
             <div class="text-center">
                 <p class="text-xl md:text-2xl">Chatgeschiedenis</p>
             </div>
+            <div class="flex flex-col justify-center">
                 {#each chatList as chat}
                     <div class="bg-[#F4FFFE] flex m-4 text-xl rounded-md">
                         <button on:click={()=>{
@@ -198,6 +199,7 @@
             }}>+
                 </button>
             </div>
+
             <div class="w-full">
                 <div class="w-full border mb-5"></div>
                 <div class="w-full mb-3">

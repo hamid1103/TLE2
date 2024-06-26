@@ -144,8 +144,6 @@ class AIController extends Controller
     public function removeChatHistory(Request $request, $id)
     {
         try {
-            BordChatentry::where('chat_entry_id', '=', $id)->delete();
-            ChatEntry::where('chat_history_id', '=', $id)->delete();
             ChatHistory::find($id)->delete();
             $chats = ChatHistory::where(['user_id'=>Auth::user()->id])->with('ChatEntries')->get();
             return response($chats, 200);
