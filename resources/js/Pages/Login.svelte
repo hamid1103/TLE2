@@ -52,7 +52,7 @@
                     Heb je nog geen account?
                 </p>
                 <p>
-                    <a href="http://127.0.0.1:8000/register" class="text-blue-500">Registreer</a> nu!
+                    <a href="/register" class="text-blue-500">Registreer</a> nu!
                 </p>
             </form>
         </div>
